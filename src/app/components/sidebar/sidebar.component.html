@@ -1,0 +1,161 @@
+<div
+  class="font-readex flex h-screen w-[272px] flex-col items-center justify-between border-l border-zinc-200 bg-white px-5 py-8"
+>
+  <div
+    class="flex h-[350px] flex-col items-start justify-start gap-6 self-stretch"
+  >
+    <div
+      class="flex items-center justify-end gap-2 self-stretch border-b border-zinc-200 px-4 pb-5"
+    >
+      <div class="flex flex-col items-end justify-center gap-px">
+        <div class="text-center text-lg font-normal leading-7 text-gray-700">
+          محمد يوسف
+        </div>
+        <div
+          class="text-center text-xs font-normal leading-[18.60px] text-blue-600"
+        >
+          مدير المشروع
+        </div>
+      </div>
+      <div class="h-12 w-12 rounded-full">
+        <img
+          src="assets/person.svg"
+          alt="profile image"
+          class="h-full w-full object-cover"
+        />
+      </div>
+    </div>
+    <div
+      class="flex h-[258px] flex-col items-start justify-start gap-3 self-stretch"
+    >
+      <div
+        class="flex cursor-pointer items-center justify-end gap-2 self-stretch rounded-lg px-4 py-2"
+        routerLink="/home"
+        routerLinkActive="bg-blue-600 bg-opacity-10"
+      >
+        <div
+          class="text-center text-base font-normal leading-relaxed text-gray-700"
+          routerLinkActive="text-blue-700"
+        >
+          لوحة التحكم
+        </div>
+        <div class="relative h-5 w-5">
+          <img
+            *ngIf="isActive('/home')"
+            src="assets/active-home.svg"
+            alt="icon"
+          />
+          <img *ngIf="!isActive('/home')" src="assets/home.svg" alt="icon" />
+        </div>
+      </div>
+      <div
+        class="flex cursor-pointer items-center justify-end gap-2 self-stretch rounded-lg px-4 py-2"
+        routerLink="/tasks"
+        routerLinkActive="bg-blue-600 bg-opacity-10  text-blue-600"
+      >
+        <div
+          class="text-center text-base font-normal leading-relaxed text-gray-700"
+          routerLinkActive="text-blue-700"
+        >
+          إدارة المهام
+        </div>
+        <div class="relative h-5 w-5">
+          <img
+            *ngIf="isActive('/tasks')"
+            src="assets/active-tasks.svg"
+            alt="icon"
+          />
+          <img
+            *ngIf="!isActive('/tasks')"
+            src="assets/tasks.svg"
+            alt="icon"
+          />
+        </div>
+      </div>
+      <div
+        class="flex cursor-pointer items-center justify-end gap-2 self-stretch rounded-lg px-4 py-2"
+        routerLink="/videos"
+        routerLinkActive="bg-blue-600 bg-opacity-10 text-blue-600"
+      >
+        <div
+          class="text-center text-base font-normal leading-relaxed text-gray-700"
+          routerLinkActive="text-blue-700"
+        >
+          الفيديوهات
+        </div>
+        <div class="relative h-5 w-5">
+          <img
+            *ngIf="isActive('/videos')"
+            src="assets/active-videos.svg"
+            alt="icon"
+          />
+          <img
+            *ngIf="!isActive('/videos')"
+            src="assets/videos.svg"
+            alt="icon"
+          />
+        </div>
+      </div>
+      <div
+        class="flex cursor-pointer items-center justify-end gap-2 self-stretch rounded-lg px-4 py-2"
+        routerLink="/researchers"
+        routerLinkActive="bg-blue-600 bg-opacity-10 text-blue-600"
+      >
+        <div
+          class="text-center text-base font-normal leading-relaxed text-gray-700"
+          routerLinkActive="text-blue-700"
+        >
+          قائمة الباحثين
+        </div>
+        <div class="relative h-5 w-5">
+          <img
+            *ngIf="isActive('/researchers')"
+            src="assets/active-researchers.svg"
+            alt="icon"
+          />
+          <img
+            *ngIf="!isActive('/researchers')"
+            src="assets/researchers.svg"
+            alt="icon"
+          />
+        </div>
+      </div>
+      <div
+        class="flex cursor-pointer items-center justify-end gap-2 self-stretch rounded-lg px-4 py-2"
+        routerLink="/profile"
+        routerLinkActive="bg-blue-600 bg-opacity-10 text-blue-600"
+      >
+        <div
+          class="text-center text-base font-normal leading-relaxed text-gray-700"
+          routerLinkActive="text-blue-700"
+        >
+          الملف الشخصي
+        </div>
+        <div class="relative h-5 w-5">
+          <img
+            *ngIf="isActive('/profile')"
+            src="assets/active-profile.svg"
+            alt="icon"
+          />
+          <img
+            *ngIf="!isActive('/profile')"
+            src="assets/profile.svg"
+            alt="icon"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="flex w-[257.78px] cursor-pointer items-center justify-between rounded-lg bg-slate-50 px-4 py-[8.89px]"
+  >
+    <div class="relative h-6 w-6">
+      <img src="assets/logout.svg" alt="icon" />
+    </div>
+    <div
+      class="text-center text-base font-normal leading-relaxed text-gray-500"
+    >
+      تسجيل الخروج
+    </div>
+  </div>
+</div>
