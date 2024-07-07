@@ -1,8 +1,8 @@
 <div
-  class="font-readex flex h-screen w-[272px] flex-col items-center justify-between border-l border-zinc-200 bg-white px-5 py-8"
+  class="font-readex flex h-full w-full flex-col items-center justify-between border-l border-zinc-200 bg-white py-8"
 >
   <div
-    class="flex h-[350px] flex-col items-start justify-start gap-6 self-stretch"
+    class="flex h-[350px] flex-col items-start justify-start gap-6 self-stretch px-5"
   >
     <div
       class="flex items-center justify-end gap-2 self-stretch border-b border-zinc-200 px-4 pb-5"
@@ -29,14 +29,13 @@
       class="flex h-[258px] flex-col items-start justify-start gap-3 self-stretch"
     >
       <div
-        class="flex cursor-pointer items-center justify-end gap-2 self-stretch rounded-lg px-4 py-2"
+        class="flex cursor-pointer items-center justify-end gap-2 self-stretch rounded-lg px-4 py-2 outline-none"
         routerLink="/home"
         routerLinkActive="bg-blue-600 bg-opacity-10"
       >
         <div
-          class="text-center text-base font-normal leading-relaxed text-gray-700"
-          routerLinkActive="text-blue-700"
-        >
+          class="text-center text-base font-normal leading-relaxed"
+          [ngClass]="{'text-blue-700': isActive('/home'), 'text-gray-700': !isActive('/home')}"        >
           لوحة التحكم
         </div>
         <div class="relative h-5 w-5">
@@ -49,13 +48,13 @@
         </div>
       </div>
       <div
-        class="flex cursor-pointer items-center justify-end gap-2 self-stretch rounded-lg px-4 py-2"
+        class="flex cursor-pointer items-center justify-end gap-2 self-stretch rounded-lg px-4 py-2 outline-none"
         routerLink="/tasks"
         routerLinkActive="bg-blue-600 bg-opacity-10  text-blue-600"
       >
         <div
-          class="text-center text-base font-normal leading-relaxed text-gray-700"
-          routerLinkActive="text-blue-700"
+          class="text-center text-base font-normal leading-relaxed"
+          [ngClass]="{'text-blue-700': isActive('/tasks'), 'text-gray-700': !isActive('/tasks')}"
         >
           إدارة المهام
         </div>
@@ -73,13 +72,13 @@
         </div>
       </div>
       <div
-        class="flex cursor-pointer items-center justify-end gap-2 self-stretch rounded-lg px-4 py-2"
+        class="flex cursor-pointer items-center justify-end gap-2 self-stretch rounded-lg px-4 py-2 outline-none"
         routerLink="/videos"
         routerLinkActive="bg-blue-600 bg-opacity-10 text-blue-600"
       >
         <div
-          class="text-center text-base font-normal leading-relaxed text-gray-700"
-          routerLinkActive="text-blue-700"
+          class="text-center text-base font-normal leading-relaxed"
+          [ngClass]="{'text-blue-700': isActive('/videos'), 'text-gray-700': !isActive('/videos')}"
         >
           الفيديوهات
         </div>
@@ -97,13 +96,13 @@
         </div>
       </div>
       <div
-        class="flex cursor-pointer items-center justify-end gap-2 self-stretch rounded-lg px-4 py-2"
+        class="flex cursor-pointer items-center justify-end gap-2 self-stretch rounded-lg px-4 py-2 outline-none"
         routerLink="/researchers"
         routerLinkActive="bg-blue-600 bg-opacity-10 text-blue-600"
       >
         <div
-          class="text-center text-base font-normal leading-relaxed text-gray-700"
-          routerLinkActive="text-blue-700"
+          class="text-center text-base font-normal leading-relaxed"
+          [ngClass]="{'text-blue-700': isActive('/researchers'), 'text-gray-700': !isActive('/researchers')}"
         >
           قائمة الباحثين
         </div>
@@ -121,13 +120,13 @@
         </div>
       </div>
       <div
-        class="flex cursor-pointer items-center justify-end gap-2 self-stretch rounded-lg px-4 py-2"
+        class="flex cursor-pointer items-center justify-end gap-2 self-stretch rounded-lg px-4 py-2 outline-none"
         routerLink="/profile"
         routerLinkActive="bg-blue-600 bg-opacity-10 text-blue-600"
       >
         <div
-          class="text-center text-base font-normal leading-relaxed text-gray-700"
-          routerLinkActive="text-blue-700"
+          class="text-center text-base font-normal leading-relaxed"
+          [ngClass]="{'text-blue-700': isActive('/profile'), 'text-gray-700': !isActive('/profile')}"
         >
           الملف الشخصي
         </div>
@@ -147,7 +146,7 @@
     </div>
   </div>
   <div
-    class="flex w-[257.78px] cursor-pointer items-center justify-between rounded-lg bg-slate-50 px-4 py-[8.89px]"
+    class="flex w-[280px] cursor-pointer items-center justify-between rounded-lg bg-slate-50 px-4 py-[8.89px] mx-2 outline-none"
   >
     <div class="relative h-6 w-6">
       <img src="assets/logout.svg" alt="icon" />
