@@ -1,0 +1,233 @@
+<div class="flex">
+  <div
+    class="flex h-[931px] w-full flex-col items-end justify-start gap-6 p-8 font-readex"
+  >
+    <div
+      class="flex h-[68px] items-center justify-end gap-2.5 self-stretch border-b border-gray-200 pb-7"
+    >
+      <div class="text-center text-2xl font-normal leading-9 text-gray-700">
+        الملف الشخصي
+      </div>
+    </div>
+
+    <div class="">
+      <!-- Profile Form -->
+      <form
+        [formGroup]="profileForm"
+        (ngSubmit)="onSubmit()"
+        enctype="multipart/form-data"
+        class="flex w-[470px] flex-col items-start justify-end gap-3"
+      >
+        <input type="hidden" name="_csrf" [value]="getCsrfToken()" />
+
+        <!-- Profile Picture Upload -->
+        <!-- <div class="flex w-full items-center justify-end gap-4">
+          <div
+            class="flex items-center justify-center gap-1.5 rounded-lg border border-zinc-200 px-4 py-2 shadow"
+          >
+            <div class="text-sm font-medium text-zinc-700">ارفع الصوره</div>
+            <div class="relative h-6 w-6">
+              <img src="assets/upload-profile.svg" alt="icon" />
+            </div>
+          </div>
+          <img
+            class="h-[72px] w-[72px] rounded-[100px]"
+            src="assets/person.svg"
+            alt="icon"
+          />
+        </div> -->
+
+        <div class="flex w-full items-center justify-end gap-4">
+          <!-- <div
+            class="cursor-pointer flex items-center justify-center gap-1.5 rounded-lg border border-zinc-200 px-4 py-2 shadow"
+          >
+            <label
+              for="photoUpload"
+              class="cursor-pointer text-sm font-medium text-zinc-700"
+              >ارفع الصورة</label
+            >
+            <input
+              type="file"
+              id="photoUpload"
+              (change)="onPhotoSelected($event)"
+              accept="image/*"
+              class="hidden"
+            />
+            <div class="relative h-6 w-6">
+              <img src="assets/upload-profile.svg" alt="icon" />
+            </div>
+          </div> -->
+          <img
+            *ngIf="selectedPhoto"
+            [src]="selectedPhoto"
+            class="h-[72px] w-[72px] rounded-[100px] object-cover"
+            alt="Selected Photo"
+          />
+          <img
+            *ngIf="!selectedPhoto"
+            src="assets/person.svg"
+            class="h-[72px] w-[72px] rounded-[100px]"
+            alt="Default Profile"
+          />
+        </div>
+
+        <!-- Person Name -->
+        <div
+          class="flex h-[70px] flex-col items-end justify-start gap-1.5 self-stretch"
+        >
+          <div class="flex w-[300px] items-center justify-end gap-2">
+            <div
+              class="shrink grow basis-0 text-right text-sm font-medium leading-snug text-gray-800"
+            >
+              اسم الباحث
+            </div>
+          </div>
+          <div
+            class="flex items-center justify-start gap-2 self-stretch rounded-lg border border-zinc-200 bg-white px-3 py-2"
+          >
+            <input
+              type="text"
+              formControlName="personName"
+              placeholder="اسم الباحث"
+              [value]="userData.name"
+              class="shrink grow basis-0 text-right leading-relaxed outline-none"
+            />
+          </div>
+        </div>
+
+        <!-- Email Address -->
+        <div
+          class="flex h-[70px] flex-col items-end justify-center gap-1.5 self-stretch"
+        >
+          <div class="flex w-[300px] items-center justify-end gap-2">
+            <div
+              class="shrink grow basis-0 text-right text-sm font-medium leading-snug text-gray-800"
+            >
+              البريد الإلكتروني
+            </div>
+          </div>
+          <div
+            class="flex items-center justify-start gap-2 self-stretch rounded-lg border border-zinc-200 bg-white px-3 py-2"
+          >
+            <input
+              type="text"
+              formControlName="emailAddress"
+              placeholder="Ex:z@frameup.io"
+              [value]="userData.email"
+              class="shrink grow basis-0 text-right leading-relaxed outline-none"
+            />
+          </div>
+        </div>
+
+        <!-- Phone Number -->
+        <div
+          class="flex h-[70px] flex-col items-end justify-center gap-1.5 self-stretch"
+        >
+          <div class="flex w-[300px] items-center justify-end gap-2">
+            <div
+              class="shrink grow basis-0 text-right text-sm font-medium leading-snug text-gray-800"
+            >
+              رقم الهاتف
+            </div>
+          </div>
+          <div
+            class="flex items-center justify-start gap-0.5 self-stretch rounded-lg border border-zinc-200 bg-white px-3 py-2"
+          >
+            <div class="flex items-center space-x-2">
+              <div class="relative">
+                <div
+                  class="flex cursor-pointer items-center space-x-2"
+                  (click)="toggleDropdown()"
+                >
+                  <img
+                    *ngIf="selectedOption && selectedOption.flag"
+                    [src]="selectedOption.flag"
+                    alt="Country Flag"
+                    class="h-6 w-6 rounded-full"
+                  />
+                  <span class="text-gray-500">{{ selectedOption?.code }}</span>
+                  <img
+                    [class.rotate-180]="isDropdownOpen"
+                    src="assets/phone-arrow.svg"
+                    alt="icon"
+                  />
+                </div>
+                <div
+                  *ngIf="isDropdownOpen"
+                  class="absolute -left-3 z-10 mt-3 w-24 rounded-md border border-gray-300 bg-white shadow-lg"
+                >
+                  <div
+                    *ngFor="let option of options"
+                    class="flex cursor-pointer items-center p-2 hover:bg-gray-100"
+                    (click)="selectOption(option)"
+                  >
+                    <img
+                      *ngIf="option.flag"
+                      [src]="option.flag"
+                      alt="Country Flag"
+                      class="h-4 w-4 rounded-full"
+                    />
+                    <span class="ml-2">{{ option.code }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <input
+              type="number"
+              formControlName="phoneNumber"
+              dir="rtl"
+              placeholder="أدخل رقم الهاتف"
+              [value]="userData.phone"
+              class="min-w-96 shrink basis-0 text-right leading-relaxed outline-none"
+            />
+          </div>
+        </div>
+
+        <!-- Gender Selection -->
+        <div
+          class="flex h-[68px] flex-col items-end justify-start gap-1.5 self-stretch"
+        >
+          <div class="flex items-center justify-end gap-2 self-stretch">
+            <div
+              class="shrink grow basis-0 text-right text-sm font-medium leading-tight tracking-tight text-gray-800"
+            >
+              الجنس
+            </div>
+          </div>
+          <div
+            class="flex h-[42px] items-center justify-start gap-2 self-stretch rounded-lg border border-zinc-200 bg-white px-3 py-2"
+          >
+            <select
+              dir="rtl"
+              formControlName="gender"
+              class="w-full border-none bg-transparent text-slate-500 outline-none focus:ring-0"
+            >
+              <option selected disabled>أختر الجنس</option>
+              <option value="1">ذكر</option>
+              <option value="0">أنثى</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div
+          class="flex h-16 flex-col items-end justify-center gap-2.5 self-stretch pt-4"
+        >
+          <!-- <button
+            type="submit"
+            class="flex h-12 items-center justify-center gap-2 rounded-[10px] bg-blue-600 px-[60px] py-2 shadow"
+          >
+            <div
+              class="text-center text-base font-medium leading-relaxed text-white"
+            >
+              تحديث
+            </div>
+          </button> -->
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="min-w-xs">
+    <app-sidebar></app-sidebar>
+  </div>
+</div>

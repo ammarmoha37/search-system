@@ -1,0 +1,11 @@
+input[formControlName="personName"]::placeholder,
+input[formControlName="email"]::placeholder,
+input[formControlName="phone"]::placeholder {
+  @apply text-slate-500;
+}
+
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

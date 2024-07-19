@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '@services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -10,23 +11,41 @@ import { Router } from '@angular/router';
 export class LoginComponent {
   loginForm: FormGroup;
   passwordFieldType: string = 'password';
+  errorMessage: string = '';
 
   constructor(
     private fb: FormBuilder,
+    private authService: AuthService,
     private router: Router,
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [Validators.required, Validators.minLength(8)]],
       remember: [false],
     });
   }
 
   onSubmit() {
     if (this.loginForm.valid) {
-      console.log(this.loginForm.value);
-      this.loginForm.reset();
-      this.router.navigate(['/home']);
+      const { email, password } = this.loginForm.value;
+
+      this.authService.login(email, password).subscribe({
+        next: (response) => {
+          // On successful login, navigate to the desired page
+          console.log(response);
+
+          if (response.user_type == 0) {
+            this.router.navigate(['/video-tasks']);
+          } else if (response.user_type == 3) {
+            this.router.navigate(['/admin-dashboard']);
+          }
+        },
+        error: (error) => {
+          // Handle error
+          this.errorMessage = 'Invalid email or password';
+          console.error('Login error:', error);
+        },
+      });
     } else {
       this.loginForm.markAllAsTouched();
     }

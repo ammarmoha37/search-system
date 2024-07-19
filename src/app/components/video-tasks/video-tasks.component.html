@@ -1,0 +1,901 @@
+<!-- <div *ngFor="let msg of notificationMessage; let i = index"> -->
+<!--  -->
+<div *ngIf="showNotification">
+  <app-submission-notifications
+    (close)="closeNotification()"
+    [status]="notificationStatus"
+    [message]="notificationMessage"
+  ></app-submission-notifications>
+</div>
+<!-- </div> -->
+<div class="flex">
+  <div
+    class="flex w-full flex-col items-center justify-start gap-6 p-8 font-readex"
+  >
+    <div
+      class="flex w-full items-center justify-end border-b border-gray-100 pb-8"
+    >
+      <div class="text-center text-2xl font-medium text-gray-700">
+        لوحة التحكم
+      </div>
+    </div>
+    <div class="flex w-full items-start justify-center gap-6">
+      <app-task-statistics></app-task-statistics>
+      <div
+        class="flex w-full flex-col items-end justify-start gap-8 rounded-lg border border-gray-100 bg-white p-3"
+      >
+        <form
+          [formGroup]="videoForm"
+          (ngSubmit)="onSubmit()"
+          enctype="multipart/form-data"
+          class="w-full"
+        >
+          <input type="hidden" name="_csrf" [value]="getCsrfToken()" />
+          <div class="mb-8 flex items-center justify-end self-stretch">
+            <div class="flex items-center justify-start gap-3">
+              <div class="text-[32px] font-medium text-black">الفديوهات</div>
+              <div
+                class="flex items-center justify-start gap-2.5 rounded bg-blue-50 p-1.5"
+              >
+                <img src="assets/researcher-video.svg" alt="icon" />
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-col items-end justify-start gap-5 self-stretch">
+            <div class="self-stretch text-right text-xl text-black">
+              البيانات الاساسية
+            </div>
+            <div
+              class="flex flex-col items-start justify-start gap-4 self-stretch"
+            >
+              <div class="flex items-start justify-start gap-3 self-stretch">
+                <div
+                  class="flex shrink grow basis-0 flex-col items-start justify-start gap-1.5"
+                >
+                  <div class="flex items-center justify-end gap-2 self-stretch">
+                    <div
+                      class="shrink grow basis-0 text-right text-sm font-medium leading-tight text-zinc-950"
+                    >
+                      رابط الفيديو
+                    </div>
+                  </div>
+                  <div
+                    class="flex items-center justify-start gap-2 self-stretch rounded-lg border border-zinc-200 bg-white px-3 py-2 outline-none"
+                  >
+                    <a
+                      *ngIf="notificationStatus == 'done'"
+                      href="videos"
+                      target="_blank"
+                      class="flex grow basis-0 cursor-pointer items-center justify-between text-right text-base font-normal leading-relaxed text-zinc-950 underline outline-none"
+                      ><div class="relative h-5 w-5">
+                        <img src="assets/link.svg" alt="icon" />
+                      </div>
+                      اضغط هنا</a
+                    >
+                    <a
+                      *ngIf="notificationStatus != 'done'"
+                      [href]="videoData.videoLink"
+                      target="_blank"
+                      class="flex grow basis-0 cursor-pointer items-center justify-between text-right text-base font-normal leading-relaxed text-zinc-950 underline outline-none"
+                    >
+                      <div class="relative h-5 w-5">
+                        <img src="assets/link.svg" alt="icon" />
+                      </div>
+                      اضغط هنا
+                    </a>
+                  </div>
+                </div>
+                <div
+                  class="flex shrink grow basis-0 flex-col items-start justify-start gap-1.5"
+                >
+                  <div class="flex items-center justify-end gap-2 self-stretch">
+                    <div
+                      class="shrink grow basis-0 text-right text-sm font-medium leading-tight text-zinc-950"
+                    >
+                      كود الفيديو
+                    </div>
+                  </div>
+                  <div
+                    class="flex items-center justify-start gap-2 self-stretch rounded-lg border border-zinc-200 bg-slate-50 px-3 py-2"
+                  >
+                    <input
+                      type="text"
+                      [value]="videoData.videoCode"
+                      readonly
+                      class="shrink grow basis-0 bg-slate-50 text-right text-gray-400 outline-none"
+                    />
+                  </div>
+                </div>
+                <div
+                  class="flex shrink grow basis-0 flex-col items-start justify-start gap-1.5"
+                >
+                  <div class="flex items-center justify-end gap-2 self-stretch">
+                    <div
+                      class="shrink grow basis-0 text-right text-sm font-medium leading-tight text-zinc-950"
+                    >
+                      مدة الفيديو
+                    </div>
+                  </div>
+                  <div
+                    class="flex items-center justify-start gap-2 self-stretch rounded-lg border border-zinc-200 bg-slate-50 px-3 py-2"
+                  >
+                    <input
+                      type="text"
+                      [value]="videoData.videoDuration"
+                      readonly
+                      class="shrink grow basis-0 bg-slate-50 text-right text-gray-400 outline-none"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-start justify-start gap-3 self-stretch">
+                <div
+                  class="flex shrink grow basis-0 flex-col items-start justify-start gap-1.5"
+                >
+                  <div class="flex items-center justify-end gap-2 self-stretch">
+                    <div
+                      class="shrink grow basis-0 text-right text-sm font-medium leading-tight text-zinc-950"
+                    >
+                      تاريخ الحدث
+                    </div>
+                  </div>
+                  <div
+                    class="flex items-center justify-start gap-2 self-stretch rounded-lg border border-zinc-200 bg-white px-3 py-2"
+                  >
+                    <input
+                      type="date"
+                      formControlName="eventDate"
+                      placeholder="تاريخ الحدث"
+                      class="shrink grow basis-0 text-right leading-relaxed outline-none"
+                    />
+                  </div>
+                  <div
+                    *ngIf="
+                      videoForm.get('eventDate').invalid &&
+                      (videoForm.get('eventDate').dirty ||
+                        videoForm.get('eventDate').touched)
+                    "
+                    class="text-sm text-red-600"
+                  >
+                    تاريخ الحدث مطلوب
+                  </div>
+                </div>
+                <div
+                  class="flex shrink grow basis-0 flex-col items-start justify-start gap-1.5"
+                >
+                  <div class="flex items-center justify-end gap-2 self-stretch">
+                    <div
+                      class="shrink grow basis-0 text-right text-sm font-medium leading-tight text-zinc-950"
+                    >
+                      نوع الحدث
+                    </div>
+                  </div>
+                  <div
+                    class="flex items-center justify-start gap-2 self-stretch rounded-lg border border-zinc-200 bg-white px-3 py-2"
+                  >
+                    <input
+                      formControlName="eventType"
+                      placeholder="نوع الحدث"
+                      class="shrink grow basis-0 text-right leading-relaxed outline-none"
+                    />
+                  </div>
+                  <div
+                    *ngIf="
+                      videoForm.get('eventType').invalid &&
+                      (videoForm.get('eventType').dirty ||
+                        videoForm.get('eventType').touched)
+                    "
+                    class="text-sm text-red-600"
+                  >
+                    نوع الحدث مطلوب
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-start justify-start gap-3 self-stretch">
+                <div
+                  class="flex shrink grow basis-0 flex-col items-start justify-start gap-1.5"
+                >
+                  <div class="flex items-center justify-end gap-2 self-stretch">
+                    <div
+                      class="shrink grow basis-0 text-right text-sm font-medium leading-tight text-zinc-950"
+                    >
+                      الدولة
+                    </div>
+                  </div>
+                  <div
+                    class="flex items-center justify-start gap-2 self-stretch rounded-lg border border-zinc-200 bg-white px-3 py-2"
+                  >
+                    <input
+                      formControlName="country"
+                      placeholder="ادخل الدولة"
+                      class="shrink grow basis-0 text-right leading-relaxed outline-none"
+                      (focus)="showCountrySuggestions = true"
+                    />
+                  </div>
+                  <div
+                    *ngIf="
+                      showCountrySuggestions && countrySuggestions.length > 0
+                    "
+                    class="absolute z-[1000] mt-20 max-h-52 w-[24%] overflow-y-auto rounded-md border border-gray-300 bg-white"
+                  >
+                    <div
+                      class="cursor-pointer p-2 hover:bg-[#f0f0f0]"
+                      dir="rtl"
+                      *ngFor="let suggestion of countrySuggestions"
+                      (click)="selectCountrySuggestion(suggestion)"
+                    >
+                      {{ suggestion }}
+                    </div>
+                  </div>
+                  <div
+                    *ngIf="
+                      videoForm.get('country')!.invalid &&
+                      (videoForm.get('country')!.dirty ||
+                        videoForm.get('country')!.touched)
+                    "
+                    class="text-sm text-red-600"
+                  >
+                    الدولة مطلوبة
+                  </div>
+                </div>
+                <div
+                  class="flex shrink grow basis-0 flex-col items-start justify-start gap-1.5"
+                >
+                  <div class="flex items-center justify-end gap-2 self-stretch">
+                    <div
+                      class="shrink grow basis-0 text-right text-sm font-medium leading-tight text-zinc-950"
+                    >
+                      العنوان
+                    </div>
+                  </div>
+                  <div
+                    class="flex items-center justify-start gap-2 self-stretch rounded-lg border border-zinc-200 bg-white px-3 py-2"
+                  >
+                    <input
+                      formControlName="address"
+                      placeholder="ادخل العنوان"
+                      class="shrink grow basis-0 text-right leading-relaxed outline-none"
+                      (focus)="showAddressSuggestions = true"
+                    />
+                  </div>
+                  <div
+                    *ngIf="
+                      showAddressSuggestions && addressSuggestions.length > 0
+                    "
+                    class="absolute z-[1000] mt-20 max-h-52 w-[24%] overflow-y-auto rounded-md border border-gray-300 bg-white"
+                  >
+                    <div
+                      class="cursor-pointer p-2 hover:bg-[#f0f0f0]"
+                      dir="rtl"
+                      *ngFor="let suggestion of addressSuggestions"
+                      (click)="selectAddressSuggestion(suggestion)"
+                    >
+                      {{ suggestion }}
+                    </div>
+                  </div>
+                  <div
+                    *ngIf="
+                      videoForm.get('address')!.invalid &&
+                      (videoForm.get('address')!.dirty ||
+                        videoForm.get('address')!.touched)
+                    "
+                    class="text-sm text-red-600"
+                  >
+                    العنوان مطلوب
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="mt-8 flex flex-col items-end justify-center gap-2 self-stretch"
+          >
+            <div
+              class="self-stretch text-right text-xl font-normal leading-7 text-black"
+            >
+              مقاطع الفيديو
+            </div>
+            <div
+              formArrayName="clips"
+              class="flex flex-col items-start justify-start self-stretch"
+            >
+              <div
+                *ngFor="let clip of clips.controls; let i = index"
+                [formGroupName]="i"
+                class="flex flex-col items-start justify-start gap-5 self-stretch border-b border-zinc-200 bg-white py-4"
+              >
+                <div
+                  (click)="toggleClip(i); $event.stopPropagation()"
+                  class="flex cursor-pointer items-center justify-between self-stretch border-b border-zinc-200 bg-white pb-4"
+                >
+                  <div>
+                    <div *ngIf="!isClipExpanded(i)">
+                      <img src="assets/arrow-down.svg" alt="icon" />
+                    </div>
+                    <div *ngIf="isClipExpanded(i)">
+                      <img src="assets/arrow-up.svg" alt="icon" />
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between gap-5">
+                    <div class="flex items-center justify-between">
+                      <div *ngIf="i !== clips.length && !isClipExpanded(i)">
+                        <div
+                          class="flex h-5 w-12 cursor-pointer justify-center"
+                          (click)="showClipConfirmationDialog(i)"
+                        >
+                          <img
+                            class="h-5 w-5"
+                            src="assets/delete.svg"
+                            alt="icon"
+                          />
+                        </div>
+                      </div>
+                      <div *ngIf="!isClipExpanded(i)">
+                        <div class="cursor-pointer">
+                          <img src="assets/edit.svg" alt="icon" />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex items-center justify-start gap-5">
+                      <div
+                        class="text-xl font-normal leading-7 text-neutral-950"
+                      >
+                        {{ videoData.videoCode }}-{{ i + 1 }} المقطع
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  *ngIf="isClipExpanded(i)"
+                  class="flex flex-col items-end justify-start gap-5 self-stretch"
+                >
+                  <div
+                    class="flex flex-col items-end justify-start gap-2 self-stretch"
+                  >
+                    <div
+                      class="flex items-center justify-end gap-2 self-stretch"
+                    >
+                      <div
+                        class="shrink grow basis-0 text-right text-sm font-medium leading-snug text-zinc-950"
+                      >
+                        التايم كود
+                      </div>
+                    </div>
+                    <div
+                      class="flex items-start justify-start gap-1.5 self-stretch"
+                    >
+                      <div class="w-1/2">
+                        <div
+                          class="flex shrink grow basis-0 items-center justify-start gap-2 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-slate-500"
+                        >
+                          <input
+                            hidden
+                            type="text"
+                            formControlName="timeCodeEnd"
+                          />
+                          <select
+                            (change)="
+                              updateEndTimeValue(
+                                i,
+                                $event.target.value,
+                                'hours'
+                              )
+                            "
+                            class="hours shrink grow basis-0 text-right leading-relaxed outline-none"
+                          >
+                            <option value="00" selected disabled>الساعة</option>
+                            <option
+                              *ngFor="let hour of getNumberOptions(24)"
+                              [value]="hour"
+                            >
+                              {{ hour }}
+                            </option>
+                          </select>
+                          <span>:</span>
+                          <select
+                            (change)="
+                              updateEndTimeValue(
+                                i,
+                                $event.target.value,
+                                'minutes'
+                              )
+                            "
+                            class="minutes shrink grow basis-0 text-right leading-relaxed outline-none"
+                          >
+                            <option value="" selected disabled>الدقيقة</option>
+                            <option
+                              *ngFor="let minute of getNumberOptions(60)"
+                              [value]="minute"
+                            >
+                              {{ minute }}
+                            </option>
+                          </select>
+                          <span>:</span>
+                          <select
+                            (change)="
+                              updateEndTimeValue(
+                                i,
+                                $event.target.value,
+                                'seconds'
+                              )
+                            "
+                            class="seconds shrink grow basis-0 text-right leading-relaxed outline-none"
+                          >
+                            <option value="" selected disabled>الثانية</option>
+                            <option
+                              *ngFor="let second of getNumberOptions(60)"
+                              [value]="second"
+                            >
+                              {{ second }}
+                            </option>
+                          </select>
+                        </div>
+                        <div class="flex items-center justify-between">
+                          <div>
+                            <div
+                              *ngIf="!isValidSeconds(endSeconds)"
+                              class="ml-3 text-sm text-red-600"
+                            >
+                              مطلوب
+                            </div>
+                          </div>
+                          <div
+                            class="mr-3 flex justify-end text-sm text-blue-500"
+                          >
+                            إلى الوقت
+                          </div>
+                        </div>
+                      </div>
+                      <div class="w-1/2">
+                        <div
+                          class="flex shrink grow basis-0 items-center justify-start gap-2 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-slate-500"
+                        >
+                          <input
+                            hidden
+                            type="text"
+                            formControlName="timeCodeStart"
+                          />
+                          <select
+                            (change)="
+                              updateStartTimeValue(
+                                i,
+                                $event.target.value,
+                                'hours'
+                              )
+                            "
+                            class="hours shrink grow basis-0 text-right leading-relaxed outline-none"
+                          >
+                            <option value="00" selected disabled>الساعة</option>
+                            <option
+                              *ngFor="let hour of getNumberOptions(24)"
+                              [value]="hour"
+                            >
+                              {{ hour }}
+                            </option>
+                          </select>
+                          <span>:</span>
+                          <select
+                            (change)="
+                              updateStartTimeValue(
+                                i,
+                                $event.target.value,
+                                'minutes'
+                              )
+                            "
+                            class="minutes shrink grow basis-0 text-right leading-relaxed outline-none"
+                          >
+                            <option value="" selected disabled>الدقيقة</option>
+                            <option
+                              *ngFor="let minute of getNumberOptions(60)"
+                              [value]="minute"
+                            >
+                              {{ minute }}
+                            </option>
+                          </select>
+                          <span>:</span>
+                          <select
+                            (change)="
+                              updateStartTimeValue(
+                                i,
+                                $event.target.value,
+                                'seconds'
+                              )
+                            "
+                            class="seconds shrink grow basis-0 text-right leading-relaxed outline-none"
+                          >
+                            <option value="" selected disabled>الثانية</option>
+                            <option
+                              *ngFor="let second of getNumberOptions(60)"
+                              [value]="second"
+                            >
+                              {{ second }}
+                            </option>
+                          </select>
+                        </div>
+                        <div class="flex items-center justify-between">
+                          <div>
+                            <div
+                              *ngIf="!isValidSeconds(startSeconds)"
+                              class="ml-3 text-sm text-red-600"
+                            >
+                              مطلوب
+                            </div>
+                          </div>
+                          <div
+                            class="mr-3 flex justify-end text-sm text-blue-500"
+                          >
+                            من الوقت
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="flex items-start justify-start gap-2 self-stretch"
+                  >
+                    <div
+                      class="flex shrink grow basis-0 flex-col items-start justify-start gap-1.5"
+                    >
+                      <div
+                        class="flex items-center justify-end gap-2 self-stretch"
+                      >
+                        <div
+                          class="shrink grow basis-0 text-right text-sm font-medium leading-tight text-zinc-950"
+                        >
+                          الكابشن
+                        </div>
+                      </div>
+                      <div
+                        class="flex items-center justify-start gap-2 self-stretch rounded-lg border border-zinc-200 bg-white p-2"
+                      >
+                        <textarea
+                          formControlName="caption"
+                          placeholder="ادخل الكابشن"
+                          class="h-32 shrink grow basis-0 text-right leading-relaxed outline-none"
+                        ></textarea>
+                      </div>
+                      <div
+                        *ngIf="
+                          clip.get('caption').invalid &&
+                          (clip.get('caption').dirty ||
+                            clip.get('caption').touched)
+                        "
+                        class="text-sm text-red-600"
+                      >
+                        الكابشن مطلوب
+                      </div>
+                    </div>
+                    <div
+                      class="flex shrink grow basis-0 flex-col items-start justify-start gap-1.5"
+                    >
+                      <div
+                        class="flex items-center justify-end gap-2 self-stretch"
+                      >
+                        <div
+                          class="shrink grow basis-0 text-right text-sm font-medium leading-tight text-zinc-950"
+                        >
+                          الثامبنل
+                        </div>
+                      </div>
+                      <div
+                        class="flex items-center justify-start gap-2 self-stretch rounded-lg border border-zinc-200 bg-white p-2"
+                      >
+                        <textarea
+                          formControlName="thumbnail"
+                          placeholder="ادخل الثامبنل"
+                          class="h-32 shrink grow basis-0 text-right leading-relaxed outline-none"
+                        ></textarea>
+                      </div>
+                      <div
+                        *ngIf="
+                          clip.get('thumbnail').invalid &&
+                          (clip.get('thumbnail').dirty ||
+                            clip.get('thumbnail').touched)
+                        "
+                        class="text-sm text-red-600"
+                      >
+                        الثامبنل مطلوبة
+                      </div>
+                    </div>
+                    <div
+                      class="flex shrink grow basis-0 flex-col items-start justify-start gap-1.5"
+                    >
+                      <div
+                        class="flex items-center justify-end gap-2 self-stretch"
+                      >
+                        <div
+                          class="shrink grow basis-0 text-right text-sm font-medium leading-tight text-zinc-950"
+                        >
+                          عنوان المقطع
+                        </div>
+                      </div>
+                      <div
+                        class="flex items-center justify-start gap-2 self-stretch rounded-lg border border-zinc-200 bg-white p-2"
+                      >
+                        <textarea
+                          formControlName="clipTitle"
+                          placeholder="ادخل العنوان"
+                          class="h-32 shrink grow basis-0 text-right leading-relaxed outline-none"
+                        ></textarea>
+                      </div>
+                      <div
+                        *ngIf="
+                          clip.get('clipTitle').invalid &&
+                          (clip.get('clipTitle').dirty ||
+                            clip.get('clipTitle').touched)
+                        "
+                        class="text-sm text-red-600"
+                      >
+                        عنوان المقطع مطلوب
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="flex flex-col items-end justify-start gap-4 self-stretch"
+                  >
+                    <div
+                      class="self-stretch text-right text-lg font-medium leading-7 text-black"
+                    >
+                      الشخصيات
+                    </div>
+                    <div
+                      formArrayName="persons"
+                      class="flex flex-col items-start justify-end gap-4 self-stretch"
+                    >
+                      <div
+                        *ngFor="
+                          let person of clip.get('persons')['controls'];
+                          let j = index
+                        "
+                        [formGroupName]="j"
+                        class="flex items-center justify-between gap-8 self-stretch"
+                      >
+                        <div
+                          (click)="fileInput.click()"
+                          class="relative h-16 w-16 cursor-pointer"
+                        >
+                          <div
+                            *ngIf="!person.get('personPhoto').value"
+                            class="absolute left-0 top-0 flex h-16 w-16 items-center justify-center rounded-full border border-blue-600 bg-blue-50"
+                          >
+                            <img
+                              src="assets/cloud-upload.svg"
+                              alt="photo"
+                              class="rounded-full object-cover"
+                            />
+                          </div>
+                          <div class="group relative h-16 w-16">
+                            <div
+                              *ngIf="person.get('personPhoto').value"
+                              class="absolute left-0 top-0 flex h-16 w-16 items-center justify-center rounded-full border border-blue-600 bg-blue-50"
+                            >
+                              <img
+                                [src]="
+                                  getPersonPhotoUrl(
+                                    person.get('personPhoto').value
+                                  )
+                                "
+                                alt="uploaded photo"
+                                class="h-14 w-14 rounded-full object-cover"
+                                (click)="fileInput.click()"
+                              />
+                              <div
+                                class="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                              >
+                                <div
+                                  class="flex h-14 w-14 items-center justify-center rounded-full bg-black opacity-70"
+                                >
+                                  <img src="assets/img-edit.svg" alt="icon" />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <input
+                            (change)="handleFileInput($event, i, j)"
+                            type="file"
+                            hidden
+                            #fileInput
+                          />
+                        </div>
+                        <div
+                          class="flex shrink grow basis-0 flex-col items-end justify-start gap-1.5"
+                        >
+                          <div
+                            class="flex items-center justify-between gap-2 self-stretch"
+                          >
+                            <img
+                              (click)="showPersonConfirmationDialog(i, j)"
+                              src="assets/delete.svg"
+                              alt="icon"
+                              class="cursor-pointer"
+                            />
+                            <div
+                              class="text-right text-sm font-medium leading-snug text-zinc-950"
+                            >
+                              الاسم
+                            </div>
+                          </div>
+                          <div
+                            class="flex items-center justify-start gap-2 self-stretch rounded-lg border border-zinc-200 bg-white px-3 py-2"
+                          >
+                            <input
+                              formControlName="personName"
+                              placeholder="ادخل الاسم"
+                              class="shrink grow basis-0 text-right leading-relaxed outline-none"
+                              (focus)="showPersonSuggestions = true"
+                            />
+                          </div>
+                          <div
+                            *ngIf="
+                              showPersonSuggestions &&
+                              personSuggestions.length > 0
+                            "
+                            class="absolute z-[1000] mt-20 max-h-52 w-[42%] overflow-y-auto rounded-md border border-gray-300 bg-white"
+                          >
+                            <div
+                              class="flex cursor-pointer items-center gap-3 p-2 hover:bg-[#f0f0f0]"
+                              dir="rtl"
+                              *ngFor="let suggestion of personSuggestions"
+                              (click)="selectPersonSuggestion(i, j, suggestion)"
+                            >
+                              <img
+                                [src]="suggestion.photoUrl"
+                                alt="photo"
+                                class="h-10 w-10 rounded-full object-cover"
+                              />
+                              {{ suggestion.name }}
+                            </div>
+                          </div>
+                          <div
+                            *ngIf="
+                              person.get('personName').invalid &&
+                              (person.get('personName').dirty ||
+                                person.get('personName').touched)
+                            "
+                            class="w-full text-left text-sm text-red-600"
+                          >
+                            اسم الشخص مطلوب
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      (click)="addPerson(i)"
+                      class="flex cursor-pointer items-center justify-end gap-2 self-stretch rounded-md bg-white"
+                    >
+                      <div
+                        class="text-center text-base font-medium leading-relaxed text-blue-700"
+                      >
+                        اضف شخصية
+                      </div>
+                      <div class="relative h-6 w-6">
+                        <img src="assets/add-person.svg" alt="icon" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="flex justify-end self-stretch border-t pt-4">
+                <div
+                  class="flex cursor-pointer items-center justify-center gap-2 rounded-[10px] bg-neutral-950 p-4 py-3 shadow"
+                >
+                  <div
+                    (click)="addClip()"
+                    class="text-center text-base font-medium leading-[17px] tracking-tight text-white"
+                  >
+                    اضف مقطع جديد
+                  </div>
+                  <div class="relative h-5 w-5">
+                    <img src="assets/add-clip.svg" alt="icon" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center justify-between self-stretch">
+              <button
+                type="submit"
+                [disabled]="videoForm.invalid"
+                [ngClass]="{
+                  'cursor-pointer bg-blue-600': !videoForm.invalid,
+                  'cursor-not-allowed bg-blue-200': videoForm.invalid,
+                }"
+                class="mt-3 flex w-full items-center justify-center gap-2 rounded-[10px] bg-blue-600 px-4 py-2 shadow-sm"
+              >
+                <div class="text-center text-base font-medium text-white">
+                  حفظ البيانات
+                </div>
+                <div class="relative h-5 w-5">
+                  <img src="assets/save.svg" alt="icon" />
+                </div>
+              </button>
+            </div>
+            <div class="flex justify-center self-stretch">
+              <div *ngIf="videoForm.invalid">
+                <p class="text-red-500">يرجى ملء جميع الحقول المطلوبة</p>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="w-[300px]">
+    <app-sidebar></app-sidebar>
+  </div>
+  <div
+    class="fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center bg-black bg-opacity-50 font-readex"
+    *ngIf="isClipDialogVisible"
+  >
+    <div
+      class="flex h-72 w-[400px] flex-col items-center justify-between rounded-xl bg-white p-5 text-center"
+    >
+      <div
+        class="inline-flex h-16 w-16 items-center justify-center rounded-full border-8 border-red-50 bg-red-100 p-3"
+      >
+        <div class="relative flex h-8 w-8 flex-col items-start justify-start">
+          <img
+            src="assets/dialog-delete.svg"
+            alt="Delete icon"
+            class="h-12 w-12"
+          />
+        </div>
+      </div>
+      <p class="text-2xl leading-loose">إزالة المقطع</p>
+      <p class="text-[#475467]" dir="rtl">
+        هل أنت متأكد أنك تريد حذف هذا المقطع؟ لا يمكن التراجع عن هذا الإجراء.
+      </p>
+      <div class="mt-5 flex justify-between gap-3 self-stretch">
+        <button
+          (click)="clipConfirmDelete()"
+          class="w-1/2 cursor-pointer rounded-lg bg-red-500 px-5 py-2.5 text-white"
+        >
+          حذف
+        </button>
+        <button
+          (click)="clipCancelDelete()"
+          class="w-1/2 cursor-pointer rounded-lg border-2 border-[#D0D5DD] px-5 py-2.5 text-[#344054]"
+        >
+          إلغاء
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    class="fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center bg-black bg-opacity-50 font-readex"
+    *ngIf="isPersonDialogVisible"
+  >
+    <div
+      class="flex h-72 w-[400px] flex-col items-center justify-between rounded-xl bg-white p-5 text-center"
+    >
+      <div
+        class="inline-flex h-16 w-16 items-center justify-center rounded-full border-8 border-red-50 bg-red-100 p-3"
+      >
+        <div class="relative flex h-8 w-8 flex-col items-start justify-start">
+          <img
+            src="assets/dialog-delete.svg"
+            alt="Delete icon"
+            class="h-12 w-12"
+          />
+        </div>
+      </div>
+      <p class="text-2xl leading-loose">إزالة الشخصية</p>
+      <p class="text-[#475467]" dir="rtl">
+        هل أنت متأكد أنك تريد حذف هذه الشخصية؟ لا يمكن التراجع عن هذا الإجراء.
+      </p>
+      <div class="mt-5 flex justify-between gap-3 self-stretch">
+        <button
+          (click)="personConfirmDelete()"
+          class="w-1/2 cursor-pointer rounded-lg bg-red-500 px-5 py-2.5 text-white"
+        >
+          حذف
+        </button>
+        <button
+          (click)="personCancelDelete()"
+          class="w-1/2 cursor-pointer rounded-lg border-2 border-[#D0D5DD] px-5 py-2.5 text-[#344054]"
+        >
+          إلغاء
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

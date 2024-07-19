@@ -1,0 +1,4 @@
+a.active {
+  @apply bg-sky-100 opacity-80 text-blue-500;
+}
+

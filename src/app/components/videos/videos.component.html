@@ -1,0 +1,71 @@
+<div class="flex">
+  <div
+    class="flex w-full flex-col items-end justify-start gap-6 p-8 font-readex"
+  >
+    <div
+      class="flex items-center justify-end gap-2.5 self-stretch border-b border-gray-100 pb-7"
+    >
+      <div class="text-center text-2xl font-normal leading-9 text-gray-700">
+        الفديوهات
+      </div>
+    </div>
+    <div
+      class="flex flex-col items-start justify-start self-stretch rounded-xl border border-gray-100 bg-white"
+    >
+      <div class="flex items-center justify-end gap-4 self-stretch px-6 py-4">
+        <table class="min-w-full bg-white" dir="rtl">
+          <thead class="border-y border-gray-100">
+            <tr
+              class="w-full self-stretch border-b border-gray-100 text-right text-sm text-gray-600"
+            >
+              <th class="px-6 py-4 font-medium">كود الفيديو</th>
+              <th class="px-6 py-4 font-medium"><div class="w-12 justify-center flex">المدة</div></th>
+              <th class="px-6 py-4 font-medium">عدد المقاطع</th>
+              <th class="px-6 py-4 font-medium">الحالة</th>
+            </tr>
+          </thead>
+          <tbody class="text-gray-600">
+            <tr
+              *ngFor="let video of paginatedVideos; let i = index"
+              [ngClass]="{ 'bg-gray-50': i % 2 === 0, 'bg-white': i % 2 !== 0 }"
+              class="h-20 border-b border-gray-100 text-sm font-medium"
+            >
+              <td class="px-6 py-4">
+                <div class="flex items-center text-gray-800">
+                  {{ video.key }}
+                </div>
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex items-center text-gray-800">
+                  {{ video.duration }}
+                </div>
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex items-center justify-center w-20 text-gray-800">
+                  {{ video.number_of_clips }} مقطع
+                </div>
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex items-center">
+                  <div
+                    class="inline-flex items-center justify-center rounded-lg bg-emerald-50 px-3 pb-2 pt-0.5"
+                  >
+                    <div
+                      class="text-center text-xs font-medium leading-[18px] text-emerald-700"
+                    >
+                      تم الانتهاء
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <app-pagination class="w-full" [totalItems]="totalItems" [itemsPerPage]="itemsPerPage" (pageChange)="setPage($event)"></app-pagination>
+    </div>
+  </div>
+  <div class="w-[300px]">
+    <app-sidebar></app-sidebar>
+  </div>
+</div>

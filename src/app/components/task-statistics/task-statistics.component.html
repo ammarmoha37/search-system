@@ -1,0 +1,73 @@
+<div class="flex flex-col items-end justify-start gap-4">
+  <div
+    class="flex w-full flex-col items-end justify-start gap-6 rounded-lg border border-gray-100 bg-white px-6 py-4 shadow-sm"
+  >
+    <div class="text-center text-2xl font-normal text-gray-700">
+      إحصائيات المهام الكلية
+    </div>
+    <div class="flex items-center justify-center gap-6">
+      <div class="flex flex-col items-start justify-start gap-6">
+        <div class="flex items-center justify-start gap-2.5">
+          <div class="flex flex-col items-end justify-start gap-px">
+            <div class="text-black">{{ donePercentage }}%</div>
+            <div class="text-center text-sm text-gray-500">المهام المنجزة</div>
+          </div>
+          <div class="h-6 w-6 rounded bg-blue-600"></div>
+        </div>
+        <div class="flex items-center justify-start gap-2.5">
+          <div class="flex flex-col items-end justify-start gap-px">
+            <div class="text-center text-black">{{ remainingPercentage }}%</div>
+            <div class="text-center text-sm text-gray-500">المهام المتبقية</div>
+          </div>
+          <div class="h-6 w-6 rounded bg-sky-100"></div>
+        </div>
+      </div>
+      <div
+        class="relative flex h-44 w-44 items-center justify-center rounded-full"
+        [ngStyle]="gradientStyle"
+      >
+        <div class="h-32 w-32 rounded-full bg-white"></div>
+      </div>
+    </div>
+  </div>
+  <div class="flex flex-col items-end justify-start gap-4 self-stretch">
+    <div
+      class="flex flex-col items-end justify-start gap-4 self-stretch rounded-lg border border-gray-100 bg-white px-6 py-4 shadow-sm"
+    >
+      <div class="text-center text-xl font-medium text-gray-700">
+        إجمالي المهام
+      </div>
+      <div class="flex items-center gap-52">
+        <div class="relative right-5 top-4">
+          <img
+            class="min-h-9 min-w-9"
+            src="assets/total-tasks.svg"
+            alt="tasks icon"
+          />
+        </div>
+        <div class="min-w-20 text-right text-[32px] font-medium text-gray-700">
+          {{ totalTasks }}
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex flex-col items-end justify-start gap-4 self-stretch rounded-lg border border-gray-100 bg-white px-6 py-4 shadow-sm"
+    >
+      <div class="text-center text-lg font-medium leading-snug text-gray-700">
+        المهام المنجزة
+      </div>
+      <div
+        class="flex items-center gap-52 text-right text-[32px] font-medium text-gray-700"
+      >
+        <div class="relative right-4 top-4">
+          <img
+            class="min-h-9 min-w-9"
+            src="assets/done-tasks.svg"
+            alt="tasks icon"
+          />
+        </div>
+        <div class="min-w-20">{{ doneTasks }}</div>
+      </div>
+    </div>
+  </div>
+</div>

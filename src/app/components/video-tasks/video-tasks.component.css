@@ -1,0 +1,14 @@
+input[formControlName="videoLink"]::placeholder {
+  color: #000;
+}
+
+input[formControlName="eventDate"]::placeholder,
+input[formControlName="eventType"]::placeholder,
+input[formControlName="country"]::placeholder,
+input[formControlName="address"]::placeholder,
+input[formControlName="caption"]::placeholder,
+input[formControlName="thumbnail"]::placeholder,
+input[formControlName="clipTitle"]::placeholder,
+input[formControlName="personName"]::placeholder {
+  @apply text-slate-500;
+}

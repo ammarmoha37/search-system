@@ -1,0 +1,94 @@
+
+<!-- <div *ngFor="msg of message"> -->
+  <div *ngIf="isVisible">
+    <div
+      *ngIf="status"
+      class="fixed bottom-3 right-3 z-50 min-w-80 flex flex-col justify-end self-stretch rounded-lg border p-4 shadow-lg"
+      [ngClass]="{
+        'border-blue-500 bg-blue-50': status === 'login' || status === 'success',
+        'border-red-500 bg-red-50': status === 'error',
+        'border-green-500 bg-green-50': status === 'done'
+      }"
+    >
+      <div class="flex items-center justify-between w-full">
+        <button
+          class="relative bottom-6 right-2 text-gray-400 hover:text-gray-600"
+          (click)="closeNotification()"
+        >
+          <svg
+            class="h-4 w-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+        </button>
+        <div class="flex items-center justify-end gap-5">
+          <div dir="rtl">
+            <h4
+              class="font-bold mb-1"
+              [ngClass]="{
+                'text-blue-500': status === 'login' || status === 'success',
+                'text-red-500': status === 'error',
+                'text-green-500': status === 'done'
+              }"
+            >
+              {{ getTitle(status) }}
+            </h4>
+            <p class="text-gray-600">{{ message }}</p>
+          </div>
+          <div
+            class="mr-3 flex h-6 w-6 items-center justify-center rounded-full text-white"
+            [ngClass]="{
+              'bg-blue-500': status === 'login' || status === 'success',
+              'bg-red-500': status === 'error',
+              'bg-green-500': status === 'done'
+            }"
+          >
+            <svg
+              class="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                *ngIf="status === 'login' || status === 'success' || status === 'done'"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"
+              ></path>
+              <path
+                *ngIf="status === 'error'"
+                d="M6.9997 5.5865L11.9495 0.636719L13.3637 2.05093L8.4139 7.0007L13.3637 11.9504L11.9495 13.3646L6.9997 8.4149L2.04996 13.3646L0.635742 11.9504L5.5855 7.0007L0.635742 2.05093L2.04996 0.636719L6.9997 5.5865Z"
+                fill="white"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="relative top-4 pt-1">
+        <div class="mb-4 flex h-2 overflow-hidden rounded text-xs">
+          <div
+            dir="rtl"
+            class="flex flex-col justify-center whitespace-nowrap text-center text-white shadow-none"
+            [ngClass]="{
+              'bg-blue-500': status === 'login' || status === 'success',
+              'bg-red-500': status === 'error',
+              'bg-green-500': status === 'done'
+            }"
+            [style.width.%]="progress"
+          ></div>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- </div> -->
