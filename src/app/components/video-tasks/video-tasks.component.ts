@@ -1,8 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TasksDataService } from '@services/tasks-data.service';
 import { VideosTasksService } from '@services/videos-tasks.service';
+import { SheetComponent } from './sheet/sheet.component';
 
 @Component({
   selector: 'app-video-tasks',
@@ -32,26 +33,27 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
 
   addressSuggestions: string[] = [];
   countrySuggestions: string[] = [];
-  personSuggestions: { name: string; photoUrl: string }[] = [];
+  personSuggestions: { character_name: string; photo: string }[] = [];
   showCountrySuggestions = false;
   showAddressSuggestions = false;
   showPersonSuggestions = false;
 
   addresses = [];
   countries = [];
-  persons = [
-    { name: 'محمود محسن', photoUrl: 'assets/person.svg' },
-    { name: 'أحمد محسن', photoUrl: 'assets/person.svg' },
-    { name: 'علي محسن', photoUrl: 'assets/person.svg' },
-    { name: 'كريم محسن', photoUrl: 'assets/person.svg' },
-    { name: 'عمرو محسن', photoUrl: 'assets/person.svg' },
-  ];
+  persons = [];
 
   videoData: any = {
     videoId: '',
     videoCode: '',
     videoDuration: '',
   };
+
+  private focusedPersonIndex: {
+    clipIndex: number;
+    personIndex: number;
+  } | null = null;
+
+  @ViewChild(SheetComponent) sheetComponent!: SheetComponent;
 
   constructor(
     private fb: FormBuilder,
@@ -86,77 +88,11 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
       this.filterCountrySuggestions(value);
     });
 
-    // this.videoForm.get('personName')!.valueChanges.subscribe((value) => {
-    //   this.filterPersonSuggestions(value);
-    // });
-
-    this.videoForm.get('clips')!.valueChanges.subscribe(() => {
-      this.clips.controls.forEach((clip, clipIndex) => {
-        const personFormArray = clip.get('persons') as FormArray;
-        personFormArray.controls.forEach((person, personIndex) => {
-          this.setupPersonNameValueChanges(clipIndex, personIndex);
-        });
-      });
-    });
-
     document.addEventListener('click', this.handleOutsideClick.bind(this));
   }
 
   ngOnDestroy(): void {
     document.removeEventListener('click', this.handleOutsideClick.bind(this));
-  }
-
-  closeNotification() {
-    this.showNotification = false;
-  }
-
-  updateEndTimeValue(
-    clipIndex: number,
-    value: string,
-    type: 'hours' | 'minutes' | 'seconds',
-  ): void {
-    const clip = this.clips.at(clipIndex);
-
-    if (type === 'hours') {
-      this.endHours = value;
-    } else if (type === 'minutes') {
-      this.endMinutes = value;
-    } else if (type === 'seconds') {
-      this.endSeconds = value;
-    }
-    const timeCodeEndValue = `${this.endHours}:${this.endMinutes}:${this.endSeconds}`;
-    clip.get('timeCodeEnd').setValue(timeCodeEndValue, { emitEvent: false });
-  }
-
-  updateStartTimeValue(
-    clipIndex: number,
-    value: string,
-    type: 'hours' | 'minutes' | 'seconds',
-  ): void {
-    const clip = this.clips.at(clipIndex);
-
-    if (type === 'hours') {
-      this.startHours = value;
-    } else if (type === 'minutes') {
-      this.startMinutes = value;
-    } else if (type === 'seconds') {
-      this.startSeconds = value;
-    }
-    const timeCodeStartValue = `${this.startHours}:${this.startMinutes}:${this.startSeconds}`;
-    clip
-      .get('timeCodeStart')
-      .setValue(timeCodeStartValue, { emitEvent: false });
-  }
-
-  getNumberOptions(limit: number): string[] {
-    return Array.from({ length: limit }, (_, i) =>
-      i.toString().padStart(2, '0'),
-    );
-  }
-
-  isValidSeconds(value: string): boolean {
-    const numericValue = +value;
-    return !isNaN(numericValue) && numericValue >= 0 && numericValue <= 59;
   }
 
   handleOutsideClick(event: MouseEvent): void {
@@ -167,6 +103,10 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
     const countryInput = document.querySelector(
       'input[formControlName="country"]',
     );
+    const personInputs = document.querySelectorAll(
+      'input[formControlName="personName"]',
+    );
+
     const suggestionsList = document.querySelector('.suggestions-list');
 
     if (
@@ -182,6 +122,13 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
       !suggestionsList?.contains(target)
     ) {
       this.showCountrySuggestions = false;
+    }
+
+    const isClickOutsidePerson = Array.from(personInputs).every(
+      (input) => target !== input && !input.contains(target),
+    );
+    if (isClickOutsidePerson && !suggestionsList?.contains(target)) {
+      this.showPersonSuggestions = false;
     }
   }
 
@@ -213,14 +160,11 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
     }
   }
 
-  filterPersonSuggestions(
-
-    query: string,
-  ): void {
-    if (query?.length > 0) {
+  filterPersonSuggestions(query: string): void {
+    if (query?.length > 0 && this.focusedPersonIndex) {
       const normalizedQuery = this.normalizeArabic(query);
       this.personSuggestions = this.persons.filter((person) =>
-        this.normalizeArabic(person.name).includes(normalizedQuery),
+        this.normalizeArabic(person.character_name).includes(normalizedQuery),
       );
       this.showPersonSuggestions = this.personSuggestions.length > 0;
     } else {
@@ -241,15 +185,16 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
   selectPersonSuggestion(
     clipIndex: number,
     personIndex: number,
-    suggestion: { name: string; photoUrl: string },
+    suggestion: { character_name: string; photo: string },
   ): void {
     const personFormArray = this.clips
       .at(clipIndex)
       .get('persons') as FormArray;
     const personFormGroup = personFormArray.at(personIndex) as FormGroup;
-    personFormGroup.get('personName')!.setValue(suggestion.name);
-    personFormGroup.get('personPhoto')!.setValue(suggestion.photoUrl);
-    this.showPersonSuggestions = false; //
+    personFormGroup.get('personName')!.setValue(suggestion.character_name);
+    personFormGroup.get('personPhoto')!.setValue(suggestion.photo);
+    this.showPersonSuggestions = false;
+    this.focusedPersonIndex = null;
   }
 
   toggleClip(index: number) {
@@ -309,8 +254,62 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
     const personFormGroup = personsArray.at(personIndex) as FormGroup;
 
     personFormGroup.get('personName')!.valueChanges.subscribe((value) => {
+      this.focusedPersonIndex = { clipIndex, personIndex };
       this.filterPersonSuggestions(value);
     });
+  }
+
+  closeNotification() {
+    this.showNotification = false;
+  }
+
+  updateEndTimeValue(
+    clipIndex: number,
+    value: string,
+    type: 'hours' | 'minutes' | 'seconds',
+  ): void {
+    const clip = this.clips.at(clipIndex);
+
+    if (type === 'hours') {
+      this.endHours = value;
+    } else if (type === 'minutes') {
+      this.endMinutes = value;
+    } else if (type === 'seconds') {
+      this.endSeconds = value;
+    }
+    const timeCodeEndValue = `${this.endHours}:${this.endMinutes}:${this.endSeconds}`;
+    clip.get('timeCodeEnd').setValue(timeCodeEndValue, { emitEvent: false });
+  }
+
+  updateStartTimeValue(
+    clipIndex: number,
+    value: string,
+    type: 'hours' | 'minutes' | 'seconds',
+  ): void {
+    const clip = this.clips.at(clipIndex);
+
+    if (type === 'hours') {
+      this.startHours = value;
+    } else if (type === 'minutes') {
+      this.startMinutes = value;
+    } else if (type === 'seconds') {
+      this.startSeconds = value;
+    }
+    const timeCodeStartValue = `${this.startHours}:${this.startMinutes}:${this.startSeconds}`;
+    clip
+      .get('timeCodeStart')
+      .setValue(timeCodeStartValue, { emitEvent: false });
+  }
+
+  getNumberOptions(limit: number): string[] {
+    return Array.from({ length: limit }, (_, i) =>
+      i.toString().padStart(2, '0'),
+    );
+  }
+
+  isValidSeconds(value: string): boolean {
+    const numericValue = +value;
+    return !isNaN(numericValue) && numericValue >= 0 && numericValue <= 59;
   }
 
   showClipConfirmationDialog(index: number) {
@@ -431,8 +430,10 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
 
           this.addresses = data.address.map((item: any) => item.address);
           this.countries = data.countries.map((item: any) => item.country);
+          this.persons = data.persons.map((item: any) => item);
 
           this.tasksDataService.fetchTasksStatus();
+          this.sheetComponent.fetchClips();
         }
         this.notificationMessage = data.message;
         this.notificationStatus = data.status;
@@ -465,6 +466,8 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
 
           this.addresses = data.address.map((item: any) => item.address);
           this.countries = data.countries.map((item: any) => item.country);
+
+          this.sheetComponent.fetchClips();
         }
       },
       (error) => {
@@ -516,9 +519,13 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
           this.showNotification = true;
           if (status == 'error') {
             this.notificationMessage = this.nextVideoData.errors;
-            // this.notificationMessage = [this.nextVideoData.errors];
           } else {
             this.notificationMessage = this.nextVideoData.message;
+            this.videoForm.reset();
+            this.resetSelectElements();
+          }
+
+          if (status == 'done') {
             this.videoForm.reset();
             this.resetSelectElements();
           }
@@ -539,107 +546,42 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
   }
 
   resetSelectElements(): void {
-  //   this.clips.controls.forEach((clip) => {
-  //   clip.get('hours').setValue('00');
-  //   clip.get('minutes').setValue('');
-  //   clip.get('seconds').setValue('');
-  // });
+    const setOrCreateOption = (
+      select: HTMLSelectElement,
+      value: string,
+      text: string,
+    ) => {
+      let option = select.querySelector(
+        `option[value="${value}"]`,
+      ) as HTMLOptionElement;
+      if (!option) {
+        option = document.createElement('option');
+        option.value = value;
+        option.text = text;
+        select.appendChild(option);
+      }
+      select.value = value;
+      select.dispatchEvent(new Event('change'));
+    };
+
     // Reset the 'hours' select elements
-    // const hourSelects = document.querySelectorAll('select[class="hours"]');
-    // hourSelects.forEach((select) => {
-    //   (select as HTMLSelectElement).value = '';
-    //   select.dispatchEvent(new Event('change'));
-    // });
+    const hourSelects = document.querySelectorAll('select.hours');
+    hourSelects.forEach((select) => {
+      setOrCreateOption(select as HTMLSelectElement, '00', 'الساعة');
+    });
 
-    // // Reset th e 'minutes' select elements
-    // const minuteSelects = document.querySelectorAll('select[class="minutes"]');
-    // minuteSelects.forEach((select) => {
-    //   (select as HTMLSelectElement).value = '';
-    //   select.dispatchEvent(new Event('change'));
-    // });
+    // Reset the 'minutes' select elements
+    const minuteSelects = document.querySelectorAll('select.minutes');
+    minuteSelects.forEach((select) => {
+      setOrCreateOption(select as HTMLSelectElement, '', 'الدقيقة');
+    });
 
-    // // Reset the 'seconds' select elements
-    // const secondSelects = document.querySelectorAll('select[class="seconds"]');
-    // secondSelects.forEach((select) => {
-    //   (select as HTMLSelectElement).value = '';
-    //   select.dispatchEvent(new Event('change'));
-    // });
-
-
-  const setOrCreateOption = (
-    select: HTMLSelectElement,
-    value: string,
-    text: string,
-  ) => {
-    let option = select.querySelector(
-      `option[value="${value}"]`,
-    ) as HTMLOptionElement;
-    if (!option) {
-      option = document.createElement('option');
-      option.value = value;
-      option.text = text;
-      select.appendChild(option);
-    }
-    select.value = value;
-    select.dispatchEvent(new Event('change'));
-  };
-
-  // Reset the 'hours' select elements
-  const hourSelects = document.querySelectorAll('select.hours');
-  hourSelects.forEach((select) => {
-    setOrCreateOption(select as HTMLSelectElement, '00', 'الساعة');
-  });
-
-  // Reset the 'minutes' select elements
-  const minuteSelects = document.querySelectorAll('select.minutes');
-  minuteSelects.forEach((select) => {
-    setOrCreateOption(select as HTMLSelectElement, '', 'الدقيقة');
-  });
-
-  // Reset the 'seconds' select elements
-  const secondSelects = document.querySelectorAll('select.seconds');
-  secondSelects.forEach((select) => {
-    setOrCreateOption(select as HTMLSelectElement, '', 'الثانية');
-  });
-
-
+    // Reset the 'seconds' select elements
+    const secondSelects = document.querySelectorAll('select.seconds');
+    secondSelects.forEach((select) => {
+      setOrCreateOption(select as HTMLSelectElement, '', 'الثانية');
+    });
   }
-
-  // onSubmit(): void {
-  //   if (this.videoForm.valid) {
-  //     const formValue = this.trimFormValuesRecursive(this.videoForm.value);
-
-  //     const submissionValue = {
-  //       ...formValue,
-  //       ...this.videoData,
-  //       clipsCount: this.clips.length,
-  //     };
-
-  //     this.videoService.postData(submissionValue).subscribe({
-  //       next: (response) => {
-  //         console.log('Data sent successfully:', response);
-  //       },
-  //       error: (error) => {
-  //         console.error('Error sending data:', error);
-  //       },
-  //     });
-  //     console.log(submissionValue);
-  //   } else {
-  //     console.log('Form is invalid');
-  //   }
-  // }
-
-  // clearEnabledFields(formGroup: FormGroup | FormArray): void {
-  //   Object.keys(formGroup.controls).forEach((key) => {
-  //     const control = formGroup.get(key);
-
-  //     if (control instanceof FormGroup || control instanceof FormArray) {
-  //       this.clearEnabledFields(control);
-  //     } else if (control.enabled) {
-  //       control.reset();
-  //     }
-  //   });
-  // }
 
   getCsrfToken(): string | null {
     const tokenMetaTag = document.querySelector('meta[name="csrf-token"]');

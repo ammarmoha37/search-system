@@ -31,18 +31,17 @@ export class LoginComponent {
 
       this.authService.login(email, password).subscribe({
         next: (response) => {
-          // On successful login, navigate to the desired page
           console.log(response);
 
           if (response.user_type == 0) {
-            this.router.navigate(['/video-tasks']);
+            this.router.navigate(['/welcome']);
           } else if (response.user_type == 3) {
             this.router.navigate(['/admin-dashboard']);
           }
         },
         error: (error) => {
           // Handle error
-          this.errorMessage = 'Invalid email or password';
+          this.errorMessage = 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
           console.error('Login error:', error);
         },
       });

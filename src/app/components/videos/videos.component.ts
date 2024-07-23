@@ -15,7 +15,7 @@ export class VideosComponent {
   constructor(private videoTasksService: VideosTasksService) {}
 
   ngOnInit() {
-    this.videoTasksService.getAllVideos().subscribe(
+    this.videoTasksService.getUserVideos().subscribe(
       (videos) => {
         this.videos = videos;
         this.totalItems = videos.length;

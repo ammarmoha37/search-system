@@ -18,7 +18,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private authService: AuthService,
-    private tasksDataService: TasksDataService
+    private tasksDataService: TasksDataService,
   ) {}
 
   isActive(route: string): boolean {
@@ -27,9 +27,9 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.userDataSubscription = this.authService.userData$.subscribe((data) => {
-        this.userData = data;
-        const role = this.userData?.type;
-        this.userName = this.userData?.name;
+      this.userData = data;
+      const role = this.userData?.type;
+      this.userName = this.userData?.name;
 
       if (role == '0') {
         this.userRole = 'باحث';
@@ -37,6 +37,16 @@ export class SidebarComponent implements OnInit, OnDestroy {
         this.userRole = 'مدير المشروع';
       }
     });
+  }
+
+  getRouterLink(): string {
+    if (this.userRole === 'admin') {
+      return '/admin-videos';
+    } else if (this.userRole === 'user') {
+      return '/user-videos';
+    } else {
+      return '/videos';
+    }
   }
 
   ngOnDestroy(): void {

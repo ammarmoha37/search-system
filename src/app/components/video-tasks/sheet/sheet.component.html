@@ -1,0 +1,204 @@
+<div
+  class="mb-5 flex w-full items-center justify-center rounded-lg border border-gray-200 p-8"
+>
+  <div class="flex w-full flex-col items-end justify-start gap-5 self-stretch">
+    <div class="self-stretch text-right text-xl text-black">
+      البيانات المساعدة
+      <div class="mt-2 self-stretch text-right text-xs text-blue-500">
+        هذه البيانات ليست دقيقة 100% ولكنها معطيات مساعدة لتسهيل عملية البحث.
+      </div>
+    </div>
+
+    <div
+      *ngFor="let clip of clips; let i = index"
+      class="flex flex-col items-start justify-start gap-5 self-stretch bg-white pb-4"
+    >
+      <div
+        (click)="toggleClip(i); $event.stopPropagation()"
+        class="flex cursor-pointer items-center justify-between self-stretch border-b border-zinc-200 bg-white pb-4"
+      >
+        <div>
+          <div *ngIf="!isClipExpanded(i)">
+            <img src="assets/arrow-down.svg" alt="icon" />
+          </div>
+          <div *ngIf="isClipExpanded(i)">
+            <img src="assets/arrow-up.svg" alt="icon" />
+          </div>
+        </div>
+        <div class="flex items-center justify-between gap-5">
+          <div class="flex items-center justify-start gap-5">
+            <div class="text-xl font-normal leading-7 text-neutral-950">
+              {{ clip.key }}-{{ i + 1 }} المقطع
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        *ngIf="isClipExpanded(i)"
+        class="flex flex-col items-end justify-start gap-5 self-stretch"
+      >
+        <div class="flex items-start justify-start gap-3 self-stretch">
+          <div
+            class="flex shrink grow basis-0 flex-col items-start justify-start gap-1.5"
+          >
+            <div class="flex items-center justify-end gap-2 self-stretch">
+              <div
+                class="shrink grow basis-0 text-right text-sm font-medium leading-tight text-zinc-950"
+              >
+                كود الفيديو
+              </div>
+            </div>
+            <div
+              class="flex items-center justify-start gap-2 self-stretch rounded-lg border border-zinc-200 bg-slate-50 px-3 py-2"
+            >
+              <input
+                type="text"
+                [value]="clip.key"
+                readonly
+                class="shrink grow basis-0 bg-slate-50 text-right text-gray-400 outline-none"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="flex items-start justify-start gap-3 self-stretch">
+          <div
+            class="flex shrink grow basis-0 flex-col items-start justify-start gap-1.5"
+          >
+            <div class="flex items-center justify-end gap-2 self-stretch">
+              <div
+                class="shrink grow basis-0 text-right text-sm font-medium leading-tight text-zinc-950"
+              >
+                تاريخ الحدث
+              </div>
+            </div>
+            <div
+              class="flex items-center justify-start gap-2 self-stretch rounded-lg border border-zinc-200 bg-slate-50 px-3 py-2"
+            >
+              <input
+                type="text"
+                [value]="clip.date"
+                readonly
+                class="shrink grow basis-0 bg-slate-50 text-right text-gray-400 outline-none"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col items-end justify-start gap-2 self-stretch">
+          <div class="flex items-center justify-end gap-2 self-stretch">
+            <div
+              class="shrink grow basis-0 text-right text-sm font-medium leading-snug text-zinc-950"
+            >
+              التايم كود
+            </div>
+          </div>
+          <div class="flex items-start justify-start gap-1.5 self-stretch">
+            <div class="w-1/2">
+              <div
+                class="flex shrink grow basis-0 items-center justify-start gap-2 rounded-lg border border-zinc-200 bg-slate-50 px-3 py-2 text-slate-500"
+              >
+                <input
+                  type="text"
+                  readonly
+                  [value]="clip.end_time"
+                  class="w-32 shrink grow basis-0 bg-slate-50 text-right text-gray-400 outline-none"
+                />
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="mr-3 flex justify-end text-sm text-blue-500">
+                  إلى الوقت
+                </div>
+              </div>
+            </div>
+            <div class="w-1/2">
+              <div
+                class="flex shrink grow basis-0 items-center justify-start gap-2 rounded-lg border border-zinc-200 bg-slate-50 px-3 py-2 text-slate-500"
+              >
+                <input
+                  type="text"
+                  readonly
+                  [value]="clip.start_time"
+                  class="w-32 shrink grow basis-0 bg-slate-50 text-right text-gray-400 outline-none"
+                />
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="mr-3 flex justify-end text-sm text-blue-500">
+                  من الوقت
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-start justify-start gap-2 self-stretch">
+          <div
+            class="flex shrink grow basis-0 flex-col items-start justify-start gap-1.5"
+          >
+            <div class="flex items-center justify-end gap-2 self-stretch">
+              <div
+                class="shrink grow basis-0 text-right text-sm font-medium leading-tight text-zinc-950"
+              >
+                الوصف
+              </div>
+            </div>
+            <div
+              class="flex items-center justify-start gap-2 self-stretch rounded-lg border border-zinc-200 bg-slate-50 p-2"
+            >
+              <textarea
+                type="text"
+                readonly
+                class="h-32 shrink grow basis-0 bg-slate-50 text-right text-gray-400 outline-none"
+              >
+                {{ clip.title }}
+              </textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex w-full justify-center rounded-lg bg-blue-100 p-1 text-lg text-blue-500 cursor-pointer"
+      (click)="OpenPersonsGallery()"
+    >
+      عرض الشخصيات
+    </div>
+    <div
+      class="fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center bg-black bg-opacity-50 font-readex"
+      *ngIf="ShowPersons"
+    >
+    <div
+    class="flex max-h-[500px] w-[700px] flex-col items-center justify-between gap-5 rounded-xl bg-white p-5 text-center"
+    >
+    <div class="relative left-80 cursor-pointer"
+    (click)="closePersonsGallery()">
+      <img src="assets/close.svg" alt="icon" />
+    </div>
+        <div
+          class="inline-flex h-20 w-20 items-center justify-center rounded-full border-[10px] border-blue-50 bg-blue-100 p-3"
+        >
+          <div class="relative flex h-8 w-8 flex-col items-start justify-start">
+            <img
+              src="assets/person-icon.svg"
+              alt="Delete icon"
+              class="h-12 w-12"
+            />
+          </div>
+        </div>
+        <p class="text-2xl leading-loose">الشخصيات المضافة</p>
+        <div
+          class="flex flex-wrap items-center justify-between gap-8 overflow-auto"
+        >
+          <div
+            *ngFor="let person of persons"
+            class="flex flex-col items-center justify-between gap-2"
+          >
+            <img
+              [src]="person.photo"
+              alt="icon"
+              class="h-20 w-20 rounded-full object-cover"
+            />
+            <p>{{ person.character_name }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

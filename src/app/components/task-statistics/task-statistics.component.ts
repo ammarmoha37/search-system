@@ -16,6 +16,7 @@ export class TaskStatisticsComponent implements OnInit, OnDestroy {
   totalTasks: number;
   isAdminDashboard: boolean;
   private taskSubscription: Subscription;
+  private routerSubscription: Subscription;
 
   constructor(
     private router: Router,
@@ -23,25 +24,29 @@ export class TaskStatisticsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.tasksService.fetchTasksStatus();
-    this.tasksService.tasks$.subscribe((tasks) => {
+    this.routerSubscription = this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.setCurrentClass();
+        this.tasksService.fetchTasksStatus();
+      });
+
+    this.taskSubscription = this.tasksService.tasks$.subscribe((tasks) => {
       this.doneTasks = tasks.done;
       this.totalTasks = tasks.total;
       this.calculateTaskStatus(this.doneTasks, this.totalTasks);
     });
 
-    this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe(() => {
-        this.setCurrentClass();
-      });
-
-    // console.log(this.isAdminDashboard);
+    this.setCurrentClass();
+    this.tasksService.fetchTasksStatus();
   }
 
   ngOnDestroy(): void {
     if (this.taskSubscription) {
       this.taskSubscription.unsubscribe();
+    }
+    if (this.taskSubscription) {
+      this.routerSubscription.unsubscribe();
     }
   }
 
@@ -55,17 +60,6 @@ export class TaskStatisticsComponent implements OnInit, OnDestroy {
     this.updateGradientStyle();
   }
 
-  // fetchTasksStatus(): void {
-  //   this.tasksService.getTasksStatus().subscribe((status) => {
-  //     const totalTasks = status.done + status.remaining;
-  //     this.donePercentage =
-  //       totalTasks > 0 ? (status.done / totalTasks) * 100 : 0;
-  //     this.remainingPercentage =
-  //       totalTasks > 0 ? (status.remaining / totalTasks) * 100 : 0;
-  //     this.updateGradientStyle();
-  //   });
-  // }
-
   updateGradientStyle(): void {
     const doneColor = '#0066FF';
     const remainingColor = '#E6F0FF';
@@ -74,7 +68,6 @@ export class TaskStatisticsComponent implements OnInit, OnDestroy {
     };
   }
 
-  // You can use this method to dynamically update the percentages
   setPercentages(done: number, remaining: number): void {
     this.donePercentage = done;
     this.remainingPercentage = remaining;
@@ -84,11 +77,6 @@ export class TaskStatisticsComponent implements OnInit, OnDestroy {
   setCurrentClass(): void {
     const url = this.router.url;
     this.isAdminDashboard = url.includes('admin-dashboard');
-
-    // if (url.includes('video-tasks')) {
-    //   this.isAdminDashboard = false;
-    // } else if (url.includes('admin-dashboard')) {
-    //   this.isAdminDashboard = true;
-    // }
+    console.log(this.isAdminDashboard);
   }
 }

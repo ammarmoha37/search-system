@@ -26,7 +26,7 @@ export class AuthService {
           if (response.access_token) {
             localStorage.setItem(this.tokenKey, response.access_token);
             this.fetchUserData().subscribe(() => {
-              this.loginStatusSubject.next(true); // Notify of login after user data is fetched
+              this.loginStatusSubject.next(true);
             });
           }
         }),
@@ -43,15 +43,28 @@ export class AuthService {
     );
   }
 
-  getToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
+  logout(): Observable<any> {
+    const token = this.getToken();
+    return this.http
+      .post<any>(
+        `${this.apiUrl}/logout`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      )
+      .pipe(
+        tap(() => {
+          localStorage.removeItem(this.tokenKey);
+          localStorage.removeItem(this.userDataKey);
+          this.userDataSubject.next(''); // Clear user data on logout
+          this.loginStatusSubject.next(false); // Notify of logout
+        }),
+      );
   }
 
-  logout(): void {
-    localStorage.removeItem(this.tokenKey);
-    localStorage.removeItem(this.userDataKey);
-    this.userDataSubject.next(''); // Clear user data on logout
-    this.loginStatusSubject.next(false); // Notify of logout
+  getToken(): string | null {
+    return localStorage.getItem(this.tokenKey);
   }
 
   fetchUserData(): Observable<any> {
@@ -68,8 +81,4 @@ export class AuthService {
       );
   }
 
-  // private getUserDataFromStorage(): any {
-  //   const userDataString = localStorage.getItem(this.userDataKey);
-  //   return userDataString ? JSON.parse(userDataString) : null;
-  // }
 }

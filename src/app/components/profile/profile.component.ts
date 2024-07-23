@@ -87,7 +87,6 @@ export class ProfileComponent implements OnInit {
           name: data.name,
           email: data.email,
           phone: data.phone,
-          gender: data.gender,
           photo: data.photo,
         };
 

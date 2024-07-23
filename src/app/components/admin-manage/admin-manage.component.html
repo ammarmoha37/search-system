@@ -1,0 +1,98 @@
+<div class="flex ">
+  <div class="flex w-full flex-col items-center justify-start gap-6 p-8 font-readex">
+    <div
+      class="flex w-full items-center justify-between border-b border-gray-200 pb-6"
+    >
+      <div
+        class="flex items-center justify-center rounded-lg bg-blue-600 px-4 pb-2.5 pt-2 text-center text-base font-normal leading-relaxed text-white"
+      >
+        إضافة مهام
+      </div>
+      <div class="text-center text-2xl font-normal leading-9 text-gray-700">
+        إدارة المهام
+      </div>
+    </div>
+
+    <div
+      class="flex w-full flex-col items-start justify-start rounded-xl border border-gray-200 bg-white"
+    >
+      <div class="flex items-center justify-end self-stretch px-6 py-4">
+        <!-- <div
+          class="flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 shadow-sm"
+        >
+          <img src="assets/arrow.svg" alt="icon" />
+          <div class="text-sm font-medium leading-snug text-gray-600">
+              الباحثين
+          </div>
+        </div> -->
+        <div class="text-2xl font-normal leading-9 text-black">
+          قائمة الباحثين
+        </div>
+      </div>
+
+        <div class="flex items-center justify-end gap-4 self-stretch">
+          <table class="min-w-full bg-white rounded-xl" dir="rtl">
+            <thead class="border-y border-gray-200">
+              <tr
+                class="w-full self-stretch border-b border-gray-200 text-right text-sm text-gray-600"
+              >
+                <th class="w-[270px] px-6 py-4 font-medium">اسم الباحث</th>
+                <th class="w-[270px] px-6 py-4 font-medium">المهام المكلف بها</th>
+                <th class="w-[270px] px-6 py-4 font-medium">المهام المنجزة</th>
+                <th class="w-[270px] px-6 py-4 font-medium">نسبة الإنجاز</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody class="text-gray-600">
+              <tr
+                *ngFor="let researcher of researchers; let i = index"
+                [ngClass]="{
+                  'bg-gray-50': i % 2 === 0,
+                  'bg-white': i % 2 !== 0,
+                }"
+                class="h-20 border-b border-gray-100 text-sm font-medium"
+              >
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-3 text-gray-800">
+                    <img src="assets/person.svg" alt="icon">
+                    {{ researcher.user_name }}
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="flex items-center text-gray-800">
+                    {{ researcher.user_all_videos }} فيديو
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  <div
+                    class="flex items-center text-gray-800"
+                  >
+                    {{ researcher.user_videos_done }} فيديو
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="flex items-center">
+                    <div class="ml-4 h-2.5 w-44 rounded-full bg-gray-200">
+                      <div
+                        class="h-2.5 rounded-full bg-blue-600"
+                        [style.width.%]="calculateCompletionPercentage(researcher.user_videos_done, researcher.user_all_videos)"
+                      ></div>
+                    </div>
+                    <span>{{ calculateCompletionPercentage(researcher.user_videos_done, researcher.user_all_videos) }}%</span>
+                  </div>
+                </td>
+                <td>
+                  <img src="assets/edit.svg" alt="icon" class="cursor-pointer">
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <app-pagination class="w-full" [totalItems]="totalItems" [itemsPerPage]="itemsPerPage" (pageChange)="setPage($event)"></app-pagination>
+
+    </div>
+  </div>
+  <div class="w-[300px]">
+    <app-sidebar></app-sidebar>
+  </div>
+</div>

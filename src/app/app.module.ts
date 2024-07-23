@@ -19,6 +19,11 @@ import { TaskStatisticsComponent } from '@components/task-statistics/task-statis
 import { SubmissionNotificationsComponent } from '@components/video-tasks/submission-notifications/submission-notifications.component';
 import { VideosComponent } from './components/videos/videos.component';
 import { PaginationComponent } from './components/pagination/pagination.component';
+import { SheetComponent } from './components/video-tasks/sheet/sheet.component';
+import { WelcomeComponent } from './components/welcome/welcome.component';
+import { AdminManageComponent } from './components/admin-manage/admin-manage.component';
+import { AdminVideosComponent } from './components/admin-videos/admin-videos.component';
+import { ResearchersListComponent } from './components/researchers-list/researchers-list.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +37,11 @@ import { PaginationComponent } from './components/pagination/pagination.componen
     SubmissionNotificationsComponent,
     VideosComponent,
     PaginationComponent,
+    SheetComponent,
+    WelcomeComponent,
+    AdminManageComponent,
+    AdminVideosComponent,
+    ResearchersListComponent,
   ],
   imports: [
     BrowserModule,

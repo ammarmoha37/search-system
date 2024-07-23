@@ -1,6 +1,16 @@
-<div class="flex flex-col items-end justify-start gap-4">
+<div
+  class="flex items-center justify-center gap-4"
+  [ngClass]="{
+    'flex-row': isAdminDashboard,
+    'flex-col': !isAdminDashboard,
+  }"
+>
   <div
-    class="flex w-full flex-col items-end justify-start gap-6 rounded-lg border border-gray-100 bg-white px-6 py-4 shadow-sm"
+    class="flex flex-col items-end justify-start gap-6 rounded-lg border border-gray-200 bg-white shadow-sm"
+    [ngClass]="{
+      'w-11/12 px-4 py-7': isAdminDashboard,
+      'px-6 py-4': !isAdminDashboard,
+    }"
   >
     <div class="text-center text-2xl font-normal text-gray-700">
       إحصائيات المهام الكلية
@@ -30,14 +40,25 @@
       </div>
     </div>
   </div>
-  <div class="flex flex-col items-end justify-start gap-4 self-stretch">
+  <div
+    class="flex flex-col items-end justify-start gap-4 self-stretch"
+    [ngClass]="{
+      'w-1/2': isAdminDashboard,
+    }"
+  >
     <div
-      class="flex flex-col items-end justify-start gap-4 self-stretch rounded-lg border border-gray-100 bg-white px-6 py-4 shadow-sm"
+      class="flex h-1/2 flex-col items-end justify-center gap-5 self-stretch rounded-lg border border-gray-200 bg-white px-6 py-4 shadow-sm"
     >
       <div class="text-center text-xl font-medium text-gray-700">
         إجمالي المهام
       </div>
-      <div class="flex items-center gap-52">
+      <div
+        class="flex w-full items-center justify-between"
+        [ngClass]="{
+          'w-1/2 gap-5': isAdminDashboard,
+          'gap-52': !isAdminDashboard,
+        }"
+      >
         <div class="relative right-5 top-4">
           <img
             class="min-h-9 min-w-9"
@@ -51,13 +72,17 @@
       </div>
     </div>
     <div
-      class="flex flex-col items-end justify-start gap-4 self-stretch rounded-lg border border-gray-100 bg-white px-6 py-4 shadow-sm"
+      class="flex h-1/2 flex-col items-end justify-center gap-5 self-stretch rounded-lg border border-gray-200 bg-white px-6 py-4 shadow-sm"
     >
       <div class="text-center text-lg font-medium leading-snug text-gray-700">
         المهام المنجزة
       </div>
       <div
-        class="flex items-center gap-52 text-right text-[32px] font-medium text-gray-700"
+        class="flex w-full items-center justify-between"
+        [ngClass]="{
+          'gap-5': isAdminDashboard,
+          'gap-52': !isAdminDashboard,
+        }"
       >
         <div class="relative right-4 top-4">
           <img
@@ -66,7 +91,9 @@
             alt="tasks icon"
           />
         </div>
-        <div class="min-w-20">{{ doneTasks }}</div>
+        <div class="min-w-20 text-right text-[32px] font-medium text-gray-700">
+          {{ doneTasks }}
+        </div>
       </div>
     </div>
   </div>

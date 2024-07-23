@@ -1,11 +1,11 @@
 <div
-  class="flex min-h-screen h-full w-full flex-col items-center justify-between border-l border-zinc-200 bg-white py-8 font-readex"
+  class="flex min-h-screen h-full w-full flex-col items-center justify-between border-l border-gray-200 bg-white py-8 font-readex"
 >
   <div
     class="flex h-[350px] flex-col items-start justify-start gap-6 self-stretch px-5"
   >
     <div
-      class="flex items-center justify-end gap-2 self-stretch border-b border-zinc-200 px-4 pb-5"
+      class="flex items-center justify-end gap-2 self-stretch border-b border-gray-200 px-4 pb-5"
     >
       <div class="flex flex-col items-end justify-center gap-px">
         <div class="text-center text-sm font-normal leading-7 text-gray-700">
@@ -83,49 +83,78 @@
       <div
         *ngIf="userRole == 'مدير المشروع'"
         class="flex cursor-pointer items-center justify-end gap-2 self-stretch rounded-lg px-4 py-2 outline-none"
-        routerLink="/tasks"
+        routerLink="/tasks-manage"
         routerLinkActive="bg-blue-600 bg-opacity-10  text-blue-600"
       >
         <div
           class="text-center text-base font-normal leading-relaxed"
           [ngClass]="{
-            'text-blue-700': isActive('/tasks'),
-            'text-gray-700': !isActive('/tasks'),
+            'text-blue-700': isActive('/tasks-manage'),
+            'text-gray-700': !isActive('/tasks-manage'),
           }"
         >
           إدارة المهام
         </div>
         <div class="relative h-5 w-5">
           <img
-            *ngIf="isActive('/tasks')"
+            *ngIf="isActive('/tasks-manage')"
             src="assets/active-tasks.svg"
             alt="icon"
           />
-          <img *ngIf="!isActive('/tasks')" src="assets/tasks.svg" alt="icon" />
+          <img *ngIf="!isActive('/tasks-manage')" src="assets/tasks.svg" alt="icon" />
         </div>
       </div>
       <div
+        *ngIf="userRole == 'مدير المشروع'"
         class="flex cursor-pointer items-center justify-end gap-2 self-stretch rounded-lg px-4 py-2 outline-none"
-        routerLink="/videos"
+        routerLink="/admin-videos"
         routerLinkActive="bg-blue-600 bg-opacity-10 text-blue-600"
       >
         <div
           class="text-center text-base font-normal leading-relaxed"
           [ngClass]="{
-            'text-blue-700': isActive('/videos'),
-            'text-gray-700': !isActive('/videos'),
+            'text-blue-700': isActive('/admin-videos'),
+            'text-gray-700': !isActive('/admin-videos'),
           }"
         >
           الفيديوهات
         </div>
         <div class="relative h-5 w-5">
           <img
-            *ngIf="isActive('/videos')"
+            *ngIf="isActive('/admin-videos')"
             src="assets/active-videos.svg"
             alt="icon"
           />
           <img
-            *ngIf="!isActive('/videos')"
+            *ngIf="!isActive('/admin-videos')"
+            src="assets/videos.svg"
+            alt="icon"
+          />
+        </div>
+      </div>
+      <div
+      *ngIf="userRole == 'باحث'"
+        class="flex cursor-pointer items-center justify-end gap-2 self-stretch rounded-lg px-4 py-2 outline-none"
+        routerLink="/researcher-videos"
+        routerLinkActive="bg-blue-600 bg-opacity-10 text-blue-600"
+      >
+        <div
+          class="text-center text-base font-normal leading-relaxed"
+          [ngClass]="{
+            'text-blue-700': isActive('/researcher-videos'),
+            'text-gray-700': !isActive('/researcher-videos'),
+          }"
+        >
+          الفيديوهات
+        </div>
+        <div class="relative h-5 w-5">
+          <img
+            *ngIf="isActive('/researcher-videos')"
+            src="assets/active-videos.svg"
+            alt="icon"
+          />
+          <img
+            *ngIf="!isActive('/researcher-videos')"
             src="assets/videos.svg"
             alt="icon"
           />

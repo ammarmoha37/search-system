@@ -7,43 +7,32 @@ import { AuthService } from './auth.service';
 @Injectable({
   providedIn: 'root',
 })
-export class VideosTasksService {
+export class AdminDashboardService {
   private apiUrl = environment.apiUrl;
 
   constructor(
-    private http: HttpClient,
     private authService: AuthService,
+    private http: HttpClient,
   ) {}
 
-  getTasksStatus(): Observable<any> {
+  getAdminData(): Observable<any> {
     const token = this.authService.getToken();
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-    return this.http.get<any>(
-      `${this.apiUrl}/status`,
-      { headers },
-    );
+    return this.http.get(`${this.apiUrl}/admin/dashboard`, { headers });
   }
 
-  getUserVideos(): Observable<any> {
+  getAllVideos(): Observable<any> {
     const token = this.authService.getToken();
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.get(`${this.apiUrl}/allVideos`, { headers });
+    return this.http.get(`${this.apiUrl}/admin/videosInfo`, { headers });
   }
 
-  // Fetch data
-  getDefaultVideoData(): Observable<any> {
+  getAllResearchers(): Observable<any> {
     const token = this.authService.getToken();
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-
-    return this.http.get(`${this.apiUrl}/video`, { headers });
+    return this.http.get(`${this.apiUrl}/admin/getAllUsers`, { headers });
   }
 
-  // Send data
-  postData(data: any) {
-    const token = this.authService.getToken();
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-    return this.http.post(`${this.apiUrl}/videos`, data, { headers });
-  }
 }

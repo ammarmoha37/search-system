@@ -12,7 +12,8 @@
     <div
       class="flex flex-col items-start justify-start self-stretch rounded-xl border border-gray-200 bg-white"
     >
-      <div class="flex items-center justify-end gap-4 self-stretch px-6 py-4">
+    <!-- search & filter -->
+      <div class="flex items-center justify-end gap-4 self-stretch">
         <table class="min-w-full bg-white" dir="rtl">
           <thead class="border-y border-gray-200">
             <tr
@@ -20,7 +21,10 @@
             >
               <th class="px-6 py-4 font-medium">كود الفيديو</th>
               <th class="px-6 py-4 font-medium"><div class="w-12 justify-center flex">المدة</div></th>
+              <th class="px-6 py-4 font-medium">اسم الباحث</th>
               <th class="px-6 py-4 font-medium">عدد المقاطع</th>
+              <th class="px-6 py-4 font-medium">وقت البداية</th>
+              <th class="px-6 py-4 font-medium">وقت النهاية</th>
               <th class="px-6 py-4 font-medium">الحالة</th>
             </tr>
           </thead>
@@ -32,17 +36,32 @@
             >
               <td class="px-6 py-4">
                 <div class="flex items-center text-gray-800">
-                  {{ video.key }}
+                  {{ video.video_key }}
                 </div>
               </td>
               <td class="px-6 py-4">
                 <div class="flex items-center text-gray-800">
-                  {{ video.duration }}
+                  {{ video.video_duration }}
+                </div>
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex items-center text-gray-800">
+                  {{ video.user_name }}
                 </div>
               </td>
               <td class="px-6 py-4">
                 <div class="flex items-center justify-center w-20 text-gray-800">
-                  {{ video.number_of_clips }} مقطع
+                  {{ video.number_of_clips }}
+                </div>
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex items-center justify-center w-20 text-gray-800">
+                  {{ video.start_task }}
+                </div>
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex items-center justify-center w-20 text-gray-800">
+                  {{ video.end_task }}
                 </div>
               </td>
               <td class="px-6 py-4">
@@ -53,7 +72,7 @@
                     <div
                       class="text-center text-xs font-medium leading-[18px] text-emerald-700"
                     >
-                      تم الانتهاء
+                      {{ video.video_status }}
                     </div>
                   </div>
                 </div>

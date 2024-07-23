@@ -1,9 +1,9 @@
 <div class="flex">
   <div
-    class="font-readex flex w-[1240px] flex-col items-center justify-start gap-6 p-8"
+    class="flex w-full flex-col items-center justify-start gap-6 p-8 font-readex"
   >
     <div
-      class="flex w-full items-center justify-between border-b border-gray-100 pb-6"
+      class="flex w-full items-center justify-between border-b border-gray-200 pb-6"
     >
       <div
         class="flex items-center justify-center rounded-lg bg-blue-600 px-4 pb-2.5 pt-2 text-center text-base font-normal leading-relaxed text-white"
@@ -16,7 +16,7 @@
     </div>
     <div class="flex h-72 w-full items-start justify-between gap-6">
       <div
-        class="flex h-72 w-1/2 flex-col items-end justify-start gap-6 rounded-lg border border-gray-100 px-6 py-4 shadow-sm"
+        class="flex h-72 w-1/2 flex-col items-end justify-start gap-6 rounded-lg border border-gray-200 px-6 py-4 shadow-sm"
       >
         <div class="text-center text-2xl font-normal leading-9 text-gray-700">
           الرسم البياني للمهام
@@ -87,107 +87,10 @@
           </div>
         </div>
       </div>
-      <!-- <app-task-statistics></app-task-statistics> -->
-      <div class="flex h-72 w-1/2 items-start justify-end gap-4">
-        <div
-          class="flex w-[68%] shrink grow basis-0 flex-col items-end justify-start gap-6 self-stretch rounded-lg border border-gray-100 bg-white px-6 py-4 shadow-sm"
-        >
-          <div class="text-center text-2xl font-normal leading-9 text-gray-700">
-            إحصائيات المهام الكليه
-          </div>
-          <div class="inline-flex items-center justify-center gap-6">
-            <div class="inline-flex flex-col items-start justify-start gap-6">
-              <div class="inline-flex items-start justify-start gap-[9px]">
-                <div class="inline-flex flex-col items-end justify-start gap-2">
-                  <div
-                    class="text-center text-base font-normal leading-relaxed text-black"
-                  >
-                    35%
-                  </div>
-                  <div
-                    class="text-center text-sm font-light leading-snug text-gray-500"
-                  >
-                    المهام المنجزة
-                  </div>
-                </div>
-                <div class="h-6 w-6 rounded bg-blue-600"></div>
-              </div>
-              <div class="inline-flex items-start justify-start gap-[9px]">
-                <div class="inline-flex flex-col items-end justify-start gap-2">
-                  <div
-                    class="text-center text-base font-normal leading-relaxed text-black"
-                  >
-                    65%
-                  </div>
-                  <div
-                    class="text-center text-sm font-light leading-snug text-gray-500"
-                  >
-                    المهام المتبقية
-                  </div>
-                </div>
-                <div class="h-6 w-6 rounded bg-sky-100"></div>
-              </div>
-            </div>
-            <div class="relative h-[174px] w-[174px]">
-              <div
-                class="absolute left-0 top-0 h-[174px] w-[174px] rounded-full bg-sky-100"
-              ></div>
-              <div
-                class="absolute left-0 top-0 h-[174px] w-[174px] rounded-full bg-blue-600"
-              ></div>
-            </div>
-          </div>
-        </div>
-        <div
-          class="inline-flex w-[31%] flex-col justify-start gap-4 self-stretch"
-        >
-          <div
-            class="flex shrink grow basis-0 flex-col items-end justify-start gap-4 rounded-lg border border-gray-100 bg-white px-6 py-4 shadow-sm"
-          >
-            <div
-              class="text-center text-xl font-normal leading-7 text-gray-700"
-            >
-              إجمالي المهام
-            </div>
-            <div
-              class="flex items-center text-center text-[32px] font-medium leading-[44.80px] text-gray-700"
-            >
-              <div class="relative right-7 top-7">
-                <img
-                  class="min-h-9 min-w-9"
-                  src="assets/total-tasks.svg"
-                  alt="tasks icon"
-                />
-              </div>
-              <div class="min-w-20">2000</div>
-            </div>
-          </div>
-          <div
-            class="flex shrink grow basis-0 flex-col items-end justify-start gap-4 rounded-lg border border-gray-100 bg-white px-6 py-4 shadow-sm"
-          >
-            <div
-              class="text-center text-xl font-medium leading-snug text-gray-700"
-            >
-              المهام المنجزة
-            </div>
-            <div
-              class="flex items-center text-center text-[32px] font-medium leading-[44.80px] text-gray-700"
-            >
-              <div class="relative right-7 top-7">
-                <img
-                  class="min-h-9 min-w-9"
-                  src="assets/done-tasks.svg"
-                  alt="tasks icon"
-                />
-              </div>
-              <div class="min-w-20 text-end">700</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <app-task-statistics class="w-1/2"></app-task-statistics>
     </div>
     <div
-      class="flex w-full flex-col items-start justify-start rounded-xl border border-gray-100 bg-white"
+      class="flex w-full flex-col items-start justify-start rounded-xl border border-gray-200 bg-white"
     >
       <div class="flex items-center justify-between self-stretch px-6 py-4">
         <div
@@ -203,175 +106,80 @@
         </div>
       </div>
 
-      <div class="w-full overflow-x-auto" dir="rtl">
-        <table class="min-w-full bg-white">
-          <thead class="border-y border-gray-100">
+      <div class="flex items-center justify-end gap-4 self-stretch">
+        <table class="min-w-full rounded-xl bg-white" dir="rtl">
+          <thead class="border-y border-gray-200">
             <tr
-              class="border-b border-gray-100 text-right text-sm text-gray-600"
+              class="w-full self-stretch border-b border-gray-200 text-right text-sm text-gray-600"
             >
-              <th class="px-6 py-4 font-medium">اسم الباحث</th>
-              <th class="px-6 py-4 font-medium">المهام المكلف بها</th>
-              <th class="px-6 py-4 font-medium">المهام المنجزة</th>
-              <th class="px-6 py-4 font-medium"> الإنجاز</th>
-              <th class="max-w-16"></th>
+              <th class="w-[270px] px-6 py-4 font-medium">اسم الباحث</th>
+              <th class="w-[270px] px-6 py-4 font-medium">المهام المكلف بها</th>
+              <th class="w-[270px] px-6 py-4 font-medium">المهام المنجزة</th>
+              <th class="w-[270px] px-6 py-4 font-medium">نسبة الإنجاز</th>
+              <th></th>
             </tr>
           </thead>
           <tbody class="text-gray-600">
-            <tr class="border-b border-gray-100 bg-gray-50 text-sm font-medium">
+            <tr
+              *ngFor="
+                let researcher of researchers.slice(0, 3);
+                let i = index;
+                let last = last
+              "
+              [ngClass]="{
+                'bg-gray-50': i % 2 === 0,
+                'bg-white': i % 2 !== 0,
+                'border-b border-gray-200 rounded-b-xl': !last,
+              }"
+              class="h-20 text-sm font-medium"
+            >
               <td class="px-6 py-4">
-                <div class="flex items-center gap-3">
-                  <div class="h-10 w-10">
-                    <img
-                      class="h-10 w-10 rounded-full"
-                      src="assets/person.svg"
-                      alt="person"
-                    />
-                  </div>
-                  <div class="ml-4">
-                    <div class="text-gray-900">
-                      أحمد محمد
-                    </div>
-                  </div>
+                <div class="flex items-center gap-3 text-gray-800">
+                  <img src="assets/person.svg" alt="icon" />
+                  {{ researcher.user_name }}
                 </div>
               </td>
               <td class="px-6 py-4">
-                400 فيديو
+                <div class="flex items-center text-gray-800">
+                  {{ researcher.user_all_videos }} فيديو
+                </div>
               </td>
               <td class="px-6 py-4">
-                200 فيديو
+                <div class="flex items-center text-gray-800">
+                  {{ researcher.user_videos_done }} فيديو
+                </div>
               </td>
-              <td class="px-6 py-4 max-w-52">
+              <td class="px-6 py-4">
                 <div class="flex items-center">
                   <div class="ml-4 h-2.5 w-44 rounded-full bg-gray-200">
                     <div
                       class="h-2.5 rounded-full bg-blue-600"
-                      [style.width.%]="completionPercentage"
+                      [style.width.%]="
+                        calculateCompletionPercentage(
+                          researcher.user_videos_done,
+                          researcher.user_all_videos
+                        )
+                      "
                     ></div>
                   </div>
-                  <span>50%</span>
+                  <span
+                    >{{
+                      calculateCompletionPercentage(
+                        researcher.user_videos_done,
+                        researcher.user_all_videos
+                      )
+                    }}%</span
+                  >
                 </div>
               </td>
-              <td class="py-4 px-4 w-16">
-                <img src="assets/edit.svg" alt="">
-              </td>
-            </tr>
-            <tr class="border-b border-gray-100 bg-gray-50 text-sm font-medium">
-              <td class="px-6 py-4">
-                <div class="flex items-center gap-3">
-                  <div class="h-10 w-10">
-                    <img
-                      class="h-10 w-10 rounded-full"
-                      src="assets/person.svg"
-                      alt="person"
-                    />
-                  </div>
-                  <div class="ml-4">
-                    <div class="text-gray-900">
-                      أحمد محمد
-                    </div>
-                  </div>
-                </div>
-              </td>
-              <td class="px-6 py-4">
-                400 فيديو
-              </td>
-              <td class="px-6 py-4">
-                200 فيديو
-              </td>
-              <td class="px-6 py-4 max-w-52">
-                <div class="flex items-center">
-                  <div class="ml-4 h-2.5 w-44 rounded-full bg-gray-200">
-                    <div
-                      class="h-2.5 rounded-full bg-blue-600"
-                      [style.width.%]="completionPercentage"
-                    ></div>
-                  </div>
-                  <span>50%</span>
-                </div>
-              </td>
-              <td class="py-4 px-4 w-16">
-                <img src="assets/edit.svg" alt="">
-              </td>
-            </tr>
-            <tr class="border-b border-gray-100 bg-gray-50 text-sm font-medium">
-              <td class="px-6 py-4">
-                <div class="flex items-center gap-3">
-                  <div class="h-10 w-10">
-                    <img
-                      class="h-10 w-10 rounded-full"
-                      src="assets/person.svg"
-                      alt="person"
-                    />
-                  </div>
-                  <div class="ml-4">
-                    <div class="text-gray-900">
-                      أحمد محمد
-                    </div>
-                  </div>
-                </div>
-              </td>
-              <td class="px-6 py-4">
-                400 فيديو
-              </td>
-              <td class="px-6 py-4">
-                200 فيديو
-              </td>
-              <td class="px-6 py-4 max-w-52">
-                <div class="flex items-center">
-                  <div class="ml-4 h-2.5 w-44 rounded-full bg-gray-200">
-                    <div
-                      class="h-2.5 rounded-full bg-blue-600"
-                      [style.width.%]="completionPercentage"
-                    ></div>
-                  </div>
-                  <span>50%</span>
-                </div>
-              </td>
-              <td class="py-4 px-4 w-16">
-                <img src="assets/edit.svg" alt="">
-              </td>
-            </tr>
-            <tr class="border-b border-gray-100 bg-gray-50 text-sm font-medium">
-              <td class="px-6 py-4">
-                <div class="flex items-center gap-3">
-                  <div class="h-10 w-10">
-                    <img
-                      class="h-10 w-10 rounded-full"
-                      src="assets/person.svg"
-                      alt="person"
-                    />
-                  </div>
-                  <div class="ml-4">
-                    <div class="text-gray-900">
-                      أحمد محمد
-                    </div>
-                  </div>
-                </div>
-              </td>
-              <td class="px-6 py-4">
-                400 فيديو
-              </td>
-              <td class="px-6 py-4">
-                200 فيديو
-              </td>
-              <td class="px-6 py-4 max-w-52">
-                <div class="flex items-center">
-                  <div class="ml-4 h-2.5 w-44 rounded-full bg-gray-200">
-                    <div
-                      class="h-2.5 rounded-full bg-blue-600"
-                      [style.width.%]="completionPercentage"
-                    ></div>
-                  </div>
-                  <span>50%</span>
-                </div>
-              </td>
-              <td class="py-4 px-4 w-16">
-                <img src="assets/edit.svg" alt="">
+              <td>
+                <img src="assets/edit.svg" alt="icon" class="cursor-pointer" />
               </td>
             </tr>
           </tbody>
         </table>
       </div>
+      <!-- <app-pagination class="w-full" [totalItems]="totalItems" [itemsPerPage]="itemsPerPage" (pageChange)="setPage($event)"></app-pagination> -->
     </div>
   </div>
   <!-- <div class="w-[300px] fixed right-0"> -->

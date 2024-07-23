@@ -13,16 +13,19 @@
     class="flex w-full flex-col items-center justify-start gap-6 p-8 font-readex"
   >
     <div
-      class="flex w-full items-center justify-end border-b border-gray-100 pb-8"
+      class="flex w-full items-center justify-end border-b border-gray-200 pb-8"
     >
       <div class="text-center text-2xl font-medium text-gray-700">
         لوحة التحكم
       </div>
     </div>
     <div class="flex w-full items-start justify-center gap-6">
-      <app-task-statistics></app-task-statistics>
+      <div class="w-96">
+        <app-sheet></app-sheet>
+        <app-task-statistics></app-task-statistics>
+      </div>
       <div
-        class="flex w-full flex-col items-end justify-start gap-8 rounded-lg border border-gray-100 bg-white p-3"
+        class="flex w-full flex-col items-end justify-start gap-8 rounded-lg border border-gray-200 bg-white p-3"
       >
         <form
           [formGroup]="videoForm"
@@ -216,7 +219,7 @@
                     *ngIf="
                       showCountrySuggestions && countrySuggestions.length > 0
                     "
-                    class="absolute z-[1000] mt-20 max-h-52 w-[24%] overflow-y-auto rounded-md border border-gray-300 bg-white"
+                    class="suggestions-list absolute z-[1000] mt-20 max-h-52 w-[24%] overflow-y-auto rounded-md border border-gray-200 bg-white"
                   >
                     <div
                       class="cursor-pointer p-2 hover:bg-[#f0f0f0]"
@@ -262,7 +265,7 @@
                     *ngIf="
                       showAddressSuggestions && addressSuggestions.length > 0
                     "
-                    class="absolute z-[1000] mt-20 max-h-52 w-[24%] overflow-y-auto rounded-md border border-gray-300 bg-white"
+                    class="suggestions-list absolute z-[1000] mt-20 max-h-52 w-[24%] overflow-y-auto rounded-md border border-gray-200 bg-white"
                   >
                     <div
                       class="cursor-pointer p-2 hover:bg-[#f0f0f0]"
@@ -643,6 +646,49 @@
                       class="flex flex-col items-start justify-end gap-4 self-stretch"
                     >
                       <div
+                        class="flex items-center justify-between gap-8 self-stretch"
+                      >
+                        <div class="relative h-16 w-16 cursor-pointer">
+                          <div
+                            class="absolute left-0 top-0 flex h-16 w-16 items-center justify-center rounded-full"
+                          >
+                            <img
+                              src="assets/hamad-bin-jasem.jpg"
+                              alt="photo"
+                              class="rounded-full object-cover h-16 w-16"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="flex shrink grow basis-0 flex-col items-end justify-start gap-1.5"
+                        >
+                          <div
+                            class="flex items-center justify-between gap-2 self-stretch"
+                          >
+                            <img
+                              (click)="showPersonConfirmationDialog(i, j)"
+                              src="assets/delete.svg"
+                              alt="icon"
+                              class="cursor-pointer"
+                            />
+                            <div
+                              class="text-right text-sm font-medium leading-snug text-zinc-950"
+                            >
+                              الاسم
+                            </div>
+                          </div>
+                          <div
+                            class="flex items-center justify-start gap-2 self-stretch rounded-lg border border-zinc-200 bg-white px-3 py-2"
+                          >
+                            <input
+                              value="سعادة الشيخ حمد بن جاسم بن جبر آل ثاني (رئيس الوزراء)"
+                              class="shrink grow basis-0 text-right leading-relaxed outline-none"
+                              readonly
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div
                         *ngFor="
                           let person of clip.get('persons')['controls'];
                           let j = index
@@ -722,15 +768,25 @@
                               formControlName="personName"
                               placeholder="ادخل الاسم"
                               class="shrink grow basis-0 text-right leading-relaxed outline-none"
-                              (focus)="showPersonSuggestions = true"
+                              (focus)="
+                                focusedPersonIndex = {
+                                  clipIndex: i,
+                                  personIndex: j,
+                                }
+                              "
+                              (input)="
+                                filterPersonSuggestions($event.target.value)
+                              "
                             />
                           </div>
                           <div
                             *ngIf="
                               showPersonSuggestions &&
-                              personSuggestions.length > 0
+                              personSuggestions.length > 0 &&
+                              focusedPersonIndex?.clipIndex === i &&
+                              focusedPersonIndex?.personIndex === j
                             "
-                            class="absolute z-[1000] mt-20 max-h-52 w-[42%] overflow-y-auto rounded-md border border-gray-300 bg-white"
+                            class="suggestions-list absolute z-[1000] mt-20 max-h-52 w-[42%] overflow-y-auto rounded-md border border-gray-200 bg-white"
                           >
                             <div
                               class="flex cursor-pointer items-center gap-3 p-2 hover:bg-[#f0f0f0]"
@@ -739,11 +795,11 @@
                               (click)="selectPersonSuggestion(i, j, suggestion)"
                             >
                               <img
-                                [src]="suggestion.photoUrl"
+                                [src]="suggestion.photo"
                                 alt="photo"
                                 class="h-10 w-10 rounded-full object-cover"
                               />
-                              {{ suggestion.name }}
+                              {{ suggestion.character_name }}
                             </div>
                           </div>
                           <div
