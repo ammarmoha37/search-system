@@ -38,7 +38,9 @@ export class TasksDataService {
   }
 
   fetchTasksStatus(): void {
-    if (this.router.url.includes('admin-dashboard')) {
+    if (this.router.url.includes('login')) {
+      return;
+    } else if (this.router.url.includes('admin-dashboard')) {
       this.adminDashboardService.getAdminData().subscribe((adminData) => {
         this.tasksSubject.next({
           total: adminData.total_videos,

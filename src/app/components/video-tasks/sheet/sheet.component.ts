@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { VideosTasksService } from '@services/videos-tasks.service';
 
 @Component({
@@ -12,6 +12,8 @@ export class SheetComponent {
   expandedClips: boolean[] = [];
   ShowPersons: boolean = false;
 
+  @Output() personSelected = new EventEmitter<any>();
+
   constructor(private videoService: VideosTasksService) {}
 
   ngOnInit(): void {}
@@ -24,6 +26,12 @@ export class SheetComponent {
       console.log(this.persons);
       this.expandedClips = new Array(this.clips.length).fill(false);
     });
+  }
+
+  clearData(): void {
+    this.clips = [];
+    this.persons = [];
+    this.expandedClips = [];
   }
 
   toggleClip(index: number): void {
@@ -40,5 +48,10 @@ export class SheetComponent {
 
   closePersonsGallery(): void {
     this.ShowPersons = false;
+  }
+
+  selectPerson(person: { character_name: string; photo: string }): void {
+    this.personSelected.emit(person);
+    this.closePersonsGallery();
   }
 }

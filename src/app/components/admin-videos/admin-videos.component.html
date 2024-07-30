@@ -12,7 +12,54 @@
     <div
       class="flex flex-col items-start justify-start self-stretch rounded-xl border border-gray-200 bg-white"
     >
-    <!-- search & filter -->
+      <div class="flex w-full justify-end gap-4">
+        <div class="flex w-64 justify-end self-stretch py-4">
+          <div class="w-full rounded-lg border border-zinc-200 px-3 py-2">
+            <select
+              dir="rtl"
+              class="w-full text-right font-normal leading-relaxed text-gray-500 outline-none"
+              (change)="onStatusChange($event)"
+            >
+              <option value="" selected>اختر الحالة</option>
+              <option value="cutted">Clipped</option>
+              <option value="waiting">Waiting</option>
+              <option value="Failed">Failed</option>
+            </select>
+          </div>
+        </div>
+        <div class="flex w-64 justify-end self-stretch py-4">
+          <div class="w-full rounded-lg border border-zinc-200 px-3 py-2">
+            <select
+              dir="rtl"
+              class="w-full text-right font-normal leading-relaxed text-gray-500 outline-none"
+              (change)="onResearcherChange($event)"
+            >
+              <option value="" selected>اختر الباحث</option>
+              <option
+                *ngFor="let researcher of researchers"
+                [value]="researcher.user_id"
+              >
+                {{ researcher.user_name }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="flex justify-end self-stretch py-4 pr-6">
+          <div
+            class="flex justify-between gap-2 rounded-lg border border-gray-200 p-2 shadow-sm"
+          >
+            <input
+              dir="rtl"
+              type="text"
+              placeholder="بحث بالكود"
+              class="w-56 outline-none"
+              [(ngModel)]="searchTerm"
+              (input)="onSearchChange()"
+            />
+            <img src="assets/search.svg" alt="icon" />
+          </div>
+        </div>
+      </div>
       <div class="flex items-center justify-end gap-4 self-stretch">
         <table class="min-w-full bg-white" dir="rtl">
           <thead class="border-y border-gray-200">
@@ -20,12 +67,15 @@
               class="w-full self-stretch border-b border-gray-200 text-right text-sm text-gray-600"
             >
               <th class="px-6 py-4 font-medium">كود الفيديو</th>
-              <th class="px-6 py-4 font-medium"><div class="w-12 justify-center flex">المدة</div></th>
+              <th class="px-6 py-4 font-medium">
+                <div class="flex w-12 justify-center">المدة</div>
+              </th>
               <th class="px-6 py-4 font-medium">اسم الباحث</th>
               <th class="px-6 py-4 font-medium">عدد المقاطع</th>
               <th class="px-6 py-4 font-medium">وقت البداية</th>
               <th class="px-6 py-4 font-medium">وقت النهاية</th>
               <th class="px-6 py-4 font-medium">الحالة</th>
+              <th></th>
             </tr>
           </thead>
           <tbody class="text-gray-600">
@@ -50,41 +100,73 @@
                 </div>
               </td>
               <td class="px-6 py-4">
-                <div class="flex items-center justify-center w-20 text-gray-800">
+                <div
+                  class="flex w-20 items-center justify-center text-gray-800"
+                >
                   {{ video.number_of_clips }}
                 </div>
               </td>
               <td class="px-6 py-4">
-                <div class="flex items-center justify-center w-20 text-gray-800">
+                <div
+                  class="flex w-20 items-center justify-center text-gray-800"
+                >
                   {{ video.start_task }}
                 </div>
               </td>
               <td class="px-6 py-4">
-                <div class="flex items-center justify-center w-20 text-gray-800">
+                <div
+                  class="flex w-20 items-center justify-center text-gray-800"
+                >
                   {{ video.end_task }}
                 </div>
               </td>
               <td class="px-6 py-4">
                 <div class="flex items-center">
                   <div
-                    class="inline-flex items-center justify-center rounded-lg bg-emerald-50 px-3 pb-2 pt-0.5"
+                    class="flex items-center justify-center rounded-lg px-3 pb-2 pt-0.5"
+                    [ngClass]="{
+                      'bg-[#fff9eb]': video.video_status === 'waiting',
+                      'bg-[#ECFDF3]': video.video_status === 'cutted',
+                      'bg-[#FFF0F0]': video.video_status === 'failed',
+                    }"
                   >
                     <div
-                      class="text-center text-xs font-medium leading-[18px] text-emerald-700"
+                      class="text-center text-xs font-medium leading-[18px]"
+                      [ngClass]="{
+                        'text-[#956321]': video.video_status === 'waiting',
+                        'text-[#067647]': video.video_status === 'cutted',
+                        'text-[#D70005]': video.video_status === 'failed',
+                      }"
                     >
                       {{ video.video_status }}
                     </div>
                   </div>
                 </div>
               </td>
+              <td
+                (click)="onClippingTasks(video.video_id)"
+                class="flex h-20 items-center justify-center"
+              >
+                <img src="assets/edit.svg" alt="icon" class="cursor-pointer" />
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
-      <app-pagination class="w-full" [totalItems]="totalItems" [itemsPerPage]="itemsPerPage" (pageChange)="setPage($event)"></app-pagination>
+      <app-pagination
+        class="w-full"
+        [totalItems]="totalItems"
+        [itemsPerPage]="itemsPerPage"
+        (pageChange)="setPage($event)"
+      ></app-pagination>
     </div>
   </div>
   <div class="w-[300px]">
     <app-sidebar></app-sidebar>
   </div>
 </div>
+<app-clipping-tasks
+  *ngIf="isClippingTasks"
+  (close)="isClippingTasks = false"
+  [defaultVideoId]="selectedVideoId"
+></app-clipping-tasks>

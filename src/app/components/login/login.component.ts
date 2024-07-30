@@ -40,7 +40,6 @@ export class LoginComponent {
           }
         },
         error: (error) => {
-          // Handle error
           this.errorMessage = 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
           console.error('Login error:', error);
         },

@@ -12,18 +12,6 @@ export class PaginationComponent {
 
   currentPage: number = 1;
 
-  // totalPagesArray(): number[] {
-  //   const totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
-  //   return Array(totalPages)
-  //     .fill(0)
-  //     .map((x, i) => i + 1);
-  // }
-
-  // onPageChange(page: number) {
-  //   this.currentPage = page;
-  //   this.pageChange.emit(page);
-  // }
-
   get totalPages(): number {
     return Math.ceil(this.totalItems / this.itemsPerPage);
   }

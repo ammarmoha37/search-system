@@ -17,13 +17,7 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
   expandedClips: boolean[];
   videoForm: FormGroup;
   nextVideoData: any;
-
-  endHours: string = '00';
-  endMinutes: string = '00';
-  endSeconds: string;
-  startHours: string = '00';
-  startMinutes: string = '00';
-  startSeconds: string;
+  loading: boolean = false;
 
   isClipDialogVisible = false;
   isPersonDialogVisible = false;
@@ -34,6 +28,7 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
   addressSuggestions: string[] = [];
   countrySuggestions: string[] = [];
   personSuggestions: { character_name: string; photo: string }[] = [];
+
   showCountrySuggestions = false;
   showAddressSuggestions = false;
   showPersonSuggestions = false;
@@ -77,7 +72,7 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.addClip();
+    this.addClip(true);
     this.fetchDefaultVideoData();
 
     this.videoForm.get('address')!.valueChanges.subscribe((value) => {
@@ -197,6 +192,21 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
     this.focusedPersonIndex = null;
   }
 
+  handlePersonSelection(person: {
+    character_name: string;
+    photo: string;
+  }): void {
+    if (this.focusedPersonIndex) {
+      const { clipIndex, personIndex } = this.focusedPersonIndex;
+      const personFormArray = this.videoForm
+        .get('clips')
+        ?.get([clipIndex, 'persons']) as FormArray;
+      const personFormGroup = personFormArray.at(personIndex) as FormGroup;
+      personFormGroup.get('personName')?.setValue(person.character_name);
+      personFormGroup.get('personPhoto')?.setValue(person.photo);
+    }
+  }
+
   toggleClip(index: number) {
     this.expandedClips[index] = !this.expandedClips[index];
   }
@@ -213,10 +223,16 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
     return this.videoForm.get('clips') as FormArray;
   }
 
-  addClip(): void {
+  addClip(expand: boolean = false): void {
     const clipGroup = this.fb.group({
       timeCodeStart: ['', Validators.required],
       timeCodeEnd: ['', Validators.required],
+      timeCodeStartHours: ['00'],
+      timeCodeStartMinutes: ['00'],
+      timeCodeStartSeconds: [''],
+      timeCodeEndHours: ['00'],
+      timeCodeEndMinutes: ['00'],
+      timeCodeEndSeconds: [''],
       caption: ['', Validators.required],
       thumbnail: ['', Validators.required],
       clipTitle: ['', Validators.required],
@@ -229,7 +245,9 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
     this.clips.push(clipGroup);
     this.setupPersonNameValueChanges(this.clips.length - 1);
 
-    this.collapseAllClips();
+    if (!expand) {
+      this.collapseAllClips();
+    }
     this.expandedClips.push(true);
   }
 
@@ -263,42 +281,52 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
     this.showNotification = false;
   }
 
-  updateEndTimeValue(
-    clipIndex: number,
-    value: string,
-    type: 'hours' | 'minutes' | 'seconds',
-  ): void {
-    const clip = this.clips.at(clipIndex);
-
-    if (type === 'hours') {
-      this.endHours = value;
-    } else if (type === 'minutes') {
-      this.endMinutes = value;
-    } else if (type === 'seconds') {
-      this.endSeconds = value;
+  updateStartTimeValue(i: number, value: string, unit: string): void {
+    const clip = this.clips.controls[i];
+    switch (unit) {
+      case 'hours':
+        clip.get('timeCodeStartHours').setValue(value);
+        break;
+      case 'minutes':
+        clip.get('timeCodeStartMinutes').setValue(value);
+        break;
+      case 'seconds':
+        clip.get('timeCodeStartSeconds').setValue(value);
+        break;
     }
-    const timeCodeEndValue = `${this.endHours}:${this.endMinutes}:${this.endSeconds}`;
-    clip.get('timeCodeEnd').setValue(timeCodeEndValue, { emitEvent: false });
+    this.updateTimeCodeStart(i);
   }
 
-  updateStartTimeValue(
-    clipIndex: number,
-    value: string,
-    type: 'hours' | 'minutes' | 'seconds',
-  ): void {
-    const clip = this.clips.at(clipIndex);
-
-    if (type === 'hours') {
-      this.startHours = value;
-    } else if (type === 'minutes') {
-      this.startMinutes = value;
-    } else if (type === 'seconds') {
-      this.startSeconds = value;
+  updateEndTimeValue(i: number, value: string, unit: string): void {
+    const clip = this.clips.controls[i];
+    switch (unit) {
+      case 'hours':
+        clip.get('timeCodeEndHours').setValue(value);
+        break;
+      case 'minutes':
+        clip.get('timeCodeEndMinutes').setValue(value);
+        break;
+      case 'seconds':
+        clip.get('timeCodeEndSeconds').setValue(value);
+        break;
     }
-    const timeCodeStartValue = `${this.startHours}:${this.startMinutes}:${this.startSeconds}`;
-    clip
-      .get('timeCodeStart')
-      .setValue(timeCodeStartValue, { emitEvent: false });
+    this.updateTimeCodeEnd(i);
+  }
+
+  updateTimeCodeStart(i: number): void {
+    const clip = this.clips.controls[i];
+    const hours = clip.get('timeCodeStartHours').value;
+    const minutes = clip.get('timeCodeStartMinutes').value;
+    const seconds = clip.get('timeCodeStartSeconds').value;
+    clip.get('timeCodeStart').setValue(`${hours}:${minutes}:${seconds}`);
+  }
+
+  updateTimeCodeEnd(i: number): void {
+    const clip = this.clips.controls[i];
+    const hours = clip.get('timeCodeEndHours').value;
+    const minutes = clip.get('timeCodeEndMinutes').value;
+    const seconds = clip.get('timeCodeEndSeconds').value;
+    clip.get('timeCodeEnd').setValue(`${hours}:${minutes}:${seconds}`);
   }
 
   getNumberOptions(limit: number): string[] {
@@ -415,8 +443,8 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
   }
 
   fetchDefaultVideoData(): void {
-    this.videoService.getDefaultVideoData().subscribe(
-      (data) => {
+    this.videoService.getDefaultVideoData().subscribe({
+      next: (data) => {
         console.log(data);
 
         if (data.status != 'done') {
@@ -439,10 +467,10 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
         this.notificationStatus = data.status;
         this.showNotification = true;
       },
-      (error) => {
+      error: (error) => {
         console.error('Error fetching default video data:', error);
       },
-    );
+    });
   }
 
   getNewVideoData() {
@@ -476,17 +504,32 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
     );
   }
 
+  resetForm(): void {
+    this.videoForm.reset();
+    this.clips.clear();
+    this.expandedClips = [];
+    this.addClip(true);
+    this.resetSelectElements();
+
+    this.videoData = {
+      videoId: '',
+      videoLink: '',
+      videoCode: '',
+      videoDuration: '',
+      userId: '',
+    };
+  }
+
   onSubmit(): void {
     if (this.videoForm.valid) {
+      this.loading = true;
       const formData = new FormData();
 
-      // Append non-file form data
       formData.append(
         'data',
         this.trimFormValuesRecursive(JSON.stringify(this.videoForm.value)),
       );
 
-      // Append file data for each person in each clip
       this.clips.controls.forEach((clip, clipIndex) => {
         const persons = clip.get('persons') as FormArray;
         persons.controls.forEach((person, personIndex) => {
@@ -509,6 +552,7 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
 
       this.videoService.postData(formData).subscribe({
         next: (response) => {
+          this.loading = false;
           this.nextVideoData = response;
 
           console.log(this.nextVideoData);
@@ -521,22 +565,22 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
             this.notificationMessage = this.nextVideoData.errors;
           } else {
             this.notificationMessage = this.nextVideoData.message;
-            this.videoForm.reset();
-            this.resetSelectElements();
-          }
 
-          if (status == 'done') {
-            this.videoForm.reset();
-            this.resetSelectElements();
-          }
+            this.resetForm();
 
-          if (this.nextVideoData != null) {
-            this.getNewVideoData();
+            if (this.nextVideoData) {
+              this.getNewVideoData();
+            }
+
+            if (this.sheetComponent) {
+              this.sheetComponent.clearData();
+            }
           }
 
           this.tasksDataService.fetchTasksStatus();
         },
         error: (error) => {
+          this.loading = false;
           console.error('Error sending data:', error);
         },
       });
@@ -564,19 +608,16 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
       select.dispatchEvent(new Event('change'));
     };
 
-    // Reset the 'hours' select elements
     const hourSelects = document.querySelectorAll('select.hours');
     hourSelects.forEach((select) => {
       setOrCreateOption(select as HTMLSelectElement, '00', 'الساعة');
     });
 
-    // Reset the 'minutes' select elements
     const minuteSelects = document.querySelectorAll('select.minutes');
     minuteSelects.forEach((select) => {
-      setOrCreateOption(select as HTMLSelectElement, '', 'الدقيقة');
+      setOrCreateOption(select as HTMLSelectElement, '00', 'الدقيقة');
     });
 
-    // Reset the 'seconds' select elements
     const secondSelects = document.querySelectorAll('select.seconds');
     secondSelects.forEach((select) => {
       setOrCreateOption(select as HTMLSelectElement, '', 'الثانية');

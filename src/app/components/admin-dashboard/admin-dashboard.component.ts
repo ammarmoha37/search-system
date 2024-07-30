@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
 import { AdminDashboardService } from '@services/admin-dashboard.service';
 
 @Component({
@@ -6,15 +6,26 @@ import { AdminDashboardService } from '@services/admin-dashboard.service';
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.css',
 })
-export class AdminDashboard implements OnInit {
+export class AdminDashboard implements OnInit, OnDestroy {
   completionPercentage: number;
-
+  isAddingTask: boolean = false;
+  isEditingTask: boolean = false;
   researchers: any = [];
+  selectedUserId: number | null = null;
 
-  constructor(private adminService: AdminDashboardService) {}
+  constructor(
+    private adminService: AdminDashboardService,
+    private el: ElementRef,
+  ) {}
 
   ngOnInit() {
     this.fetchDefaultVideoData();
+
+    document.addEventListener('click', this.handleOutsideClick.bind(this));
+  }
+
+  ngOnDestroy(): void {
+    document.removeEventListener('click', this.handleOutsideClick.bind(this));
   }
 
   fetchDefaultVideoData(): void {
@@ -26,8 +37,32 @@ export class AdminDashboard implements OnInit {
 
   calculateCompletionPercentage(done: number, total: number): number {
     if (total === 0) {
-      return 0; // Avoid division by zero
+      return 0;
     }
     return parseFloat(((done / total) * 100).toFixed(2));
+  }
+
+  handleOutsideClick(event: MouseEvent) {
+    const targetElement = event.target as HTMLElement;
+    if (this.isAddingTask && !this.el.nativeElement.contains(targetElement)) {
+      this.isAddingTask = false;
+    }
+  }
+
+  preventClose(event: MouseEvent) {
+    event.stopPropagation();
+  }
+
+  onTaskAdded() {
+    this.fetchDefaultVideoData();
+  }
+
+  onTaskEdited() {
+    this.fetchDefaultVideoData();
+  }
+
+  onEditTask(userId: number): void {
+    this.selectedUserId = userId;
+    this.isEditingTask = true;
   }
 }

@@ -14,14 +14,14 @@ interface DropdownOption {
 })
 export class ProfileComponent implements OnInit {
   profileForm!: FormGroup;
-  selectedPhoto: File | null = null;
+  successMessage: string | null = null;
+  // selectedPhoto: File | null = null;
 
   userData: any = {
     userId: '',
     name: '',
     email: '',
     phone: '',
-    gender: '',
     photo: '',
   };
 
@@ -46,10 +46,10 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     // Initialize profileForm with FormBuilder
     this.profileForm = this.fb.group({
-      personName: ['', Validators.required], // Example validation
-      emailAddress: ['', [Validators.required, Validators.email]], // Example validation
-      phoneNumber: ['', Validators.required], // Example validation
-      gender: ['أختر الجنس', Validators.required], // Example selection
+      name: ['', Validators.required], // Example validation
+      email: ['', [Validators.required, Validators.email]], // Example validation
+      phone: ['', Validators.required], // Example validation
+      password: ['', [Validators.minLength(8)]],
     });
 
     this.fetchDefaultUserData();
@@ -64,68 +64,70 @@ export class ProfileComponent implements OnInit {
     this.isDropdownOpen = false;
   }
 
-  onPhotoSelected(event: any) {
-    const file: File = event.target.files[0];
-    if (file) {
-      this.selectedPhoto = file;
+  // onPhotoSelected(event: any) {
+  //   const file: File = event.target.files[0];
+  //   if (file) {
+  //     this.selectedPhoto = file;
 
-      // Read file contents for preview
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.selectedPhoto = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-  }
+  //     // Read file contents for preview
+  //     const reader = new FileReader();
+  //     reader.onload = (e: any) => {
+  //       this.selectedPhoto = e.target.result;
+  //     };
+  //     reader.readAsDataURL(file);
+  //   }
+  // }
 
   fetchDefaultUserData(): void {
-    this.usersService.getDefaultUserData().subscribe(
-      (data) => {
+    this.usersService.getDefaultUserData().subscribe({
+      next: (data) => {
         console.log(data);
 
         this.userData = {
           name: data.name,
           email: data.email,
           phone: data.phone,
-          photo: data.photo,
         };
 
         this.profileForm.patchValue({
-          personName: data.name,
-          emailAddress: data.email,
-          phoneNumber: data.phone,
-          gender: data.gender,
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          password: '',
         });
       },
-      (error) => {
+      error: (error) => {
         console.error('Error fetching default video data:', error);
       },
-    );
+    });
   }
 
   onSubmit() {
     if (this.profileForm.valid) {
-      const formData = {
-        personName: this.profileForm.value.personName,
-        emailAddress: this.profileForm.value.emailAddress,
-        phoneNumber: this.profileForm.value.phoneNumber,
-        gender: this.profileForm.value.gender,
-      };
+      const formData = this.profileForm.value;
 
-      console.log(formData);
-
-      this.usersService.postData(formData).subscribe({
+      this.usersService.userEditInfo(formData).subscribe({
         next: (response) => {
           console.log('Data sent successfully:', response);
-          // Handle successful response (e.g., display success message)
+          this.userData = {
+            ...this.userData,
+            ...formData,
+          };
+          this.profileForm.patchValue({
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            password: '',
+          });
+          this.successMessage = 'تم تحديث البيانات بنجاح!';
+          setTimeout(() => {
+            this.successMessage = null;
+          }, 5000);
         },
         error: (error) => {
           console.error('Error sending data:', error);
-          // Handle error (e.g., display error message)
         },
       });
-    } else {
-      console.error('Form is invalid. Cannot submit.');
     }
   }
 

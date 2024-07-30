@@ -15,7 +15,6 @@ export class UsersService {
     private authService: AuthService,
   ) {}
 
-  // Fetch user data
   getDefaultUserData(): Observable<any> {
     const token = this.authService.getToken();
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
@@ -23,12 +22,12 @@ export class UsersService {
     return this.http.get(`${this.apiUrl}/user`, { headers });
   }
 
-  // Send data
-  postData(data: any) {
+  userEditInfo(userInfo: any): Observable<any> {
     const token = this.authService.getToken();
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-    return this.http.post(`${this.apiUrl}/users`, data, { headers });
+    return this.http.post<any>(`${this.apiUrl}/userEditInfo`, userInfo, {
+      headers,
+    });
   }
-
 }

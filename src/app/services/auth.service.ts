@@ -33,6 +33,22 @@ export class AuthService {
       );
   }
 
+  register(
+    name: string,
+    email: string,
+    password: string,
+    userType: number,
+  ): Observable<any> {
+    const registerData = {
+      name,
+      email,
+      password,
+      type: userType,
+    };
+
+    return this.http.post(`${this.apiUrl}/admin/register`, registerData);
+  }
+
   refreshToken(): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/refresh`, {}).pipe(
       tap((response) => {
@@ -57,8 +73,8 @@ export class AuthService {
         tap(() => {
           localStorage.removeItem(this.tokenKey);
           localStorage.removeItem(this.userDataKey);
-          this.userDataSubject.next(''); // Clear user data on logout
-          this.loginStatusSubject.next(false); // Notify of logout
+          this.userDataSubject.next('');
+          this.loginStatusSubject.next(false);
         }),
       );
   }

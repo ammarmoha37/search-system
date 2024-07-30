@@ -188,7 +188,8 @@
         >
           <div
             *ngFor="let person of persons"
-            class="flex flex-col items-center justify-between gap-2"
+            class="flex flex-col items-center justify-between gap-2 cursor-pointer"
+            (click)="selectPerson(person)"
           >
             <img
               [src]="person.photo"

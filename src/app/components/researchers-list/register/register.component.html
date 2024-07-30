@@ -1,0 +1,234 @@
+<div
+  *ngIf="!showConfirmation"
+  (click)="close.emit()"
+  class="fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center bg-black bg-opacity-70 font-readex"
+>
+  <div
+    (click)="onClickInside($event)"
+    class="inline-flex w-[480px] flex-col items-center justify-center gap-6 rounded-2xl border border-zinc-200 bg-white p-6 shadow"
+  >
+    <div class="flex h-20 w-20 items-center justify-center">
+      <div
+        class="flex items-center justify-center rounded-full border border-b-0 bg-gradient-to-b from-gray-100 to-white p-4"
+      >
+        <div
+          class="flex h-12 w-12 items-center justify-center rounded-full border bg-white shadow-sm"
+        >
+          <img class="h-5 w-5" src="assets/register-user.svg" alt="icon" />
+        </div>
+      </div>
+    </div>
+    <form
+      [formGroup]="registerForm"
+      (ngSubmit)="onSubmit()"
+      class="flex flex-col items-start justify-start gap-4 self-stretch"
+    >
+      <div class="flex flex-col items-start justify-start gap-1.5 self-stretch">
+        <div class="flex items-center justify-end gap-2 self-stretch">
+          <div
+            class="shrink grow basis-0 text-right text-sm font-medium leading-snug text-gray-800"
+          >
+            اسم المستخدم
+          </div>
+        </div>
+        <div
+          class="flex items-center justify-start gap-2 self-stretch rounded-lg border border-zinc-200 bg-white px-3 py-2"
+        >
+          <input
+            formControlName="name"
+            type="text"
+            placeholder="ادخل اسم المستخدم"
+            class="shrink grow basis-0 text-right text-base font-normal leading-relaxed text-gray-500 outline-none"
+          />
+          <div class="relative h-5 w-5">
+            <img src="assets/user.svg" alt="icon" />
+          </div>
+        </div>
+        <div
+          *ngIf="
+            registerForm.controls.name.invalid &&
+            (registerForm.controls.name.dirty ||
+              registerForm.controls.name.touched)
+          "
+          class="text-sm text-red-600"
+        >
+          <div *ngIf="registerForm.controls.name.errors.required">
+            اسم الباحث مطلوب
+          </div>
+          <div *ngIf="registerForm.controls.name.errors.name">
+            اسم الباحث غير صالح
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-col items-start justify-start gap-1.5 self-stretch">
+        <div class="flex items-center justify-end gap-2 self-stretch">
+          <div
+            class="shrink grow basis-0 text-right text-sm font-medium leading-snug text-gray-800"
+          >
+            البريد الإلكتروني
+          </div>
+        </div>
+        <div
+          class="flex items-center justify-start gap-2 self-stretch rounded-lg border border-zinc-200 bg-white px-3 py-2"
+        >
+          <input
+            formControlName="email"
+            type="email"
+            placeholder="Ex:z&#64;financial.com"
+            class="shrink grow basis-0 text-right text-base font-normal leading-relaxed text-gray-500 outline-none"
+          />
+          <div class="relative h-5 w-5">
+            <img src="assets/email.svg" alt="icon" />
+          </div>
+        </div>
+        <div
+          *ngIf="
+            registerForm.controls.email.invalid &&
+            (registerForm.controls.email.dirty ||
+              registerForm.controls.email.touched)
+          "
+          class="text-sm text-red-600"
+        >
+          <div *ngIf="registerForm.controls.email.errors.required">
+            البريد الإلكتروني مطلوب
+          </div>
+          <div *ngIf="registerForm.controls.email.errors.email">
+            البريد الإلكتروني غير صالح
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex h-[70px] flex-col items-start justify-start gap-1.5 self-stretch"
+      >
+        <div class="flex items-center justify-start gap-2 self-stretch">
+          <div
+            class="shrink grow basis-0 text-right text-sm font-medium leading-snug text-gray-800"
+          >
+            كلمة المرور
+          </div>
+        </div>
+        <div
+          class="flex items-center justify-start gap-2 self-stretch rounded-lg border border-zinc-200 bg-white px-3 py-2"
+        >
+          <div
+            class="relative h-5 w-5 cursor-pointer"
+            (click)="togglePasswordVisibility()"
+          >
+            <img src="assets/eye.svg" alt="icon" />
+          </div>
+          <input
+            formControlName="password"
+            [type]="passwordFieldType"
+            placeholder="أدخل كلمة المرور الخاصة بالمستخدم"
+            class="shrink grow basis-0 text-right text-base font-normal leading-relaxed text-gray-500 outline-none"
+          />
+          <div class="relative h-5 w-5">
+            <img src="assets/password.svg" alt="icon" />
+          </div>
+        </div>
+        <div
+          *ngIf="
+            registerForm.controls.password.invalid &&
+            (registerForm.controls.password.dirty ||
+              registerForm.controls.password.touched)
+          "
+          class="text-sm text-red-600"
+        >
+          <div *ngIf="registerForm.controls.password.errors.required">
+            كلمة المرور مطلوبة
+          </div>
+          <div *ngIf="registerForm.controls.password.errors.minlength">
+            كلمة المرور يجب أن تكون على الأقل 8 أحرف
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-col items-start justify-start gap-1.5 self-stretch">
+        <div class="flex items-center justify-end gap-2 self-stretch">
+          <div
+            class="shrink grow basis-0 text-right text-sm font-medium leading-snug text-gray-800"
+          >
+            نوع المستخدم
+          </div>
+        </div>
+        <div
+          class="flex items-center justify-start gap-2 self-stretch rounded-lg border border-zinc-200 bg-white px-3 py-2"
+        >
+          <select
+            formControlName="userType"
+            class="shrink grow basis-0 text-right text-base font-normal leading-relaxed text-gray-500 outline-none"
+          >
+            <option value="" disabled selected>اختر نوع المستخدم</option>
+            <option value="0">باحث</option>
+            <option value="3">مدير</option>
+          </select>
+        </div>
+        <div
+          *ngIf="
+            registerForm.controls.userType.invalid &&
+            (registerForm.controls.userType.dirty ||
+              registerForm.controls.userType.touched)
+          "
+          class="text-sm text-red-600"
+        >
+          <div *ngIf="registerForm.controls.userType.errors.required">
+            نوع المستخدم مطلوب
+          </div>
+        </div>
+      </div>
+      <button
+        type="submit"
+        [ngClass]="{
+          'cursor-pointer bg-blue-600': registerForm.valid,
+          'cursor-not-allowed bg-gray-400': registerForm.invalid,
+        }"
+        [disabled]="registerForm.invalid"
+        class="mt-2 inline-flex h-[52px] items-center justify-center gap-2 self-stretch rounded-xl px-4"
+      >
+        <div
+          class="text-center text-base font-medium leading-relaxed text-white"
+        >
+          اضف مستخدم
+        </div>
+      </button>
+      <div *ngIf="errorMessage" class="flex w-full justify-center text-red-600">
+        {{ errorMessage }}
+      </div>
+    </form>
+  </div>
+</div>
+<div
+  *ngIf="showConfirmation"
+  class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70"
+  (click)="close.emit()"
+>
+  <div
+    dir="rtl"
+    class="w-[400px] rounded-lg bg-white p-6 shadow-lg"
+    (click)="onClickInside($event)"
+  >
+    <h2 class="mb-4 text-center text-xl font-semibold">
+      تم إنشاء حساب جديد بنجاح
+    </h2>
+    <p class="mb-4">معلومات الحساب</p>
+    <ul class="mb-4 flex flex-col gap-2">
+      <li class="flex justify-between">
+        <p>الاسم:</p>
+        <p>{{ confirmationData.name }}</p>
+      </li>
+      <li class="flex justify-between">
+        <p>البريد الإلكتروني:</p>
+        <p>{{ confirmationData.email }}</p>
+      </li>
+      <li class="flex justify-between">
+        <p>كلمة المرور:</p>
+        <p>{{ confirmationData.password }}</p>
+      </li>
+    </ul>
+    <button
+      (click)="close.emit()"
+      class="inline-flex w-full items-center justify-center rounded-lg bg-blue-600 py-2 text-white"
+    >
+      حسنًا
+    </button>
+  </div>
+</div>

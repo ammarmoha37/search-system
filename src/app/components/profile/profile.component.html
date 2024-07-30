@@ -57,14 +57,13 @@
               <img src="assets/upload-profile.svg" alt="icon" />
             </div>
           </div> -->
-          <img
+          <!-- <img
             *ngIf="selectedPhoto"
             [src]="selectedPhoto"
             class="h-[72px] w-[72px] rounded-[100px] object-cover"
             alt="Selected Photo"
-          />
+          /> -->
           <img
-            *ngIf="!selectedPhoto"
             src="assets/person.svg"
             class="h-[72px] w-[72px] rounded-[100px]"
             alt="Default Profile"
@@ -87,7 +86,7 @@
           >
             <input
               type="text"
-              formControlName="personName"
+              formControlName="name"
               placeholder="اسم الباحث"
               [value]="userData.name"
               class="shrink grow basis-0 text-right leading-relaxed outline-none"
@@ -111,9 +110,31 @@
           >
             <input
               type="text"
-              formControlName="emailAddress"
+              formControlName="email"
               placeholder="Ex:z@frameup.io"
               [value]="userData.email"
+              class="shrink grow basis-0 text-right leading-relaxed outline-none"
+            />
+          </div>
+        </div>
+
+        <div
+          class="flex h-[70px] flex-col items-end justify-center gap-1.5 self-stretch"
+        >
+          <div class="flex w-[300px] items-center justify-end gap-2">
+            <div
+              class="shrink grow basis-0 text-right text-sm font-medium leading-snug text-gray-800"
+            >
+              كلمة المرور
+            </div>
+          </div>
+          <div
+            class="flex items-center justify-start gap-2 self-stretch rounded-lg border border-zinc-200 bg-white px-3 py-2"
+          >
+            <input
+              type="text"
+              formControlName="password"
+              placeholder="قم بإدخال كلمة المرور الجديدة"
               class="shrink grow basis-0 text-right leading-relaxed outline-none"
             />
           </div>
@@ -173,8 +194,8 @@
               </div>
             </div>
             <input
-              type="number"
-              formControlName="phoneNumber"
+              type="text"
+              formControlName="phone"
               dir="rtl"
               placeholder="أدخل رقم الهاتف"
               [value]="userData.phone"
@@ -183,13 +204,12 @@
           </div>
         </div>
 
-        
-
         <!-- Submit Button -->
         <div
-          class="flex h-16 flex-col items-end justify-center gap-2.5 self-stretch pt-4"
+          dir="rtl"
+          class="flex h-16 items-end justify-between gap-2.5 self-stretch pt-4"
         >
-          <!-- <button
+          <button
             type="submit"
             class="flex h-12 items-center justify-center gap-2 rounded-[10px] bg-blue-600 px-[60px] py-2 shadow"
           >
@@ -198,7 +218,10 @@
             >
               تحديث
             </div>
-          </button> -->
+          </button>
+          <div *ngIf="successMessage" class="text-green-500 flex items-center h-full">
+            {{ successMessage }}
+          </div>
         </div>
       </form>
     </div>

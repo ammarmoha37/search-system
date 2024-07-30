@@ -6,7 +6,8 @@
       class="flex items-center justify-between gap-2.5 self-stretch border-b border-gray-200 pb-7"
     >
       <div
-        class="flex items-center justify-center rounded-lg bg-blue-600 px-4 pb-2.5 pt-2 text-center text-base font-normal leading-relaxed text-white cursor-pointer"
+        (click)="isRegister = true"
+        class="flex cursor-pointer items-center justify-center rounded-lg bg-blue-600 px-4 pb-2.5 pt-2 text-center text-base font-normal leading-relaxed text-white"
       >
         اضف باحث
       </div>
@@ -17,9 +18,18 @@
     <div
       class="flex flex-col items-start justify-start self-stretch rounded-xl border border-gray-200 bg-white"
     >
-      <div class="flex self-stretch px-6 py-4 justify-end">
-        <div class="flex justify-between gap-2 rounded-lg border border-gray-200 p-2 shadow-sm">
-          <input dir="rtl" type="text" placeholder="بحث بالباحث" class="w-56 outline-none" />
+      <div class="flex justify-end self-stretch px-6 py-4">
+        <div
+          class="flex justify-between gap-2 rounded-lg border border-gray-200 p-2 shadow-sm"
+        >
+          <input
+            dir="rtl"
+            type="text"
+            placeholder="بحث بالباحث"
+            class="w-56 outline-none"
+            [(ngModel)]="searchTerm"
+            (input)="onSearchChange()"
+          />
           <img src="assets/search.svg" alt="icon" />
         </div>
       </div>
@@ -42,7 +52,7 @@
             >
               <td class="px-6 py-4">
                 <div class="flex items-center gap-3 text-gray-800">
-                  <img src="assets/person.svg" alt="person">
+                  <img src="assets/person.svg" alt="person" />
                   {{ researcher.name }}
                 </div>
               </td>
@@ -56,9 +66,12 @@
                   {{ researcher.phone }}
                 </div>
               </td>
-              <td>
-                  <img src="assets/edit.svg" alt="icon" class="cursor-pointer">
-                </td>
+              <td
+                (click)="onEditUser(researcher.id)"
+                class="flex h-20 items-center justify-center"
+              >
+                <img src="assets/edit.svg" alt="icon" class="cursor-pointer" />
+              </td>
             </tr>
           </tbody>
         </table>
@@ -75,41 +88,10 @@
     <app-sidebar></app-sidebar>
   </div>
 </div>
-<div
-    class="fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center bg-black bg-opacity-50 font-readex"
-    *ngIf="isClipDialogVisible"
-  >
-    <div
-      class="flex h-72 w-[400px] flex-col items-center justify-between rounded-xl bg-white p-5 text-center"
-    >
-      <div
-        class="inline-flex h-16 w-16 items-center justify-center rounded-full border-8 border-red-50 bg-red-100 p-3"
-      >
-        <div class="relative flex h-8 w-8 flex-col items-start justify-start">
-          <img
-            src="assets/dialog-delete.svg"
-            alt="Delete icon"
-            class="h-12 w-12"
-          />
-        </div>
-      </div>
-      <p class="text-2xl leading-loose">إزالة المقطع</p>
-      <p class="text-[#475467]" dir="rtl">
-        هل أنت متأكد أنك تريد حذف هذا المقطع؟ لا يمكن التراجع عن هذا الإجراء.
-      </p>
-      <div class="mt-5 flex justify-between gap-3 self-stretch">
-        <button
-          (click)="clipConfirmDelete()"
-          class="w-1/2 cursor-pointer rounded-lg bg-red-500 px-5 py-2.5 text-white"
-        >
-          حذف
-        </button>
-        <button
-          (click)="clipCancelDelete()"
-          class="w-1/2 cursor-pointer rounded-lg border-2 border-[#D0D5DD] px-5 py-2.5 text-[#344054]"
-        >
-          إلغاء
-        </button>
-      </div>
-    </div>
-  </div>
+<app-register *ngIf="isRegister" (close)="isRegister = false" (userAdded)="onUserAdded()"></app-register>
+<app-edit-user
+  *ngIf="isEditingUser"
+  [selectedUserId]="selectedUserId"
+  (close)="isEditingUser = false"
+  (userEdited)="onUserEdited()"
+></app-edit-user>

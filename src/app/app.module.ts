@@ -24,6 +24,12 @@ import { WelcomeComponent } from './components/welcome/welcome.component';
 import { AdminManageComponent } from './components/admin-manage/admin-manage.component';
 import { AdminVideosComponent } from './components/admin-videos/admin-videos.component';
 import { ResearchersListComponent } from './components/researchers-list/researchers-list.component';
+import { RegisterComponent } from './components/researchers-list/register/register.component';
+import { AddTasksComponent } from './components/add-tasks/add-tasks.component';
+import { EditTasksComponent } from './components/edit-tasks/edit-tasks.component';
+import { ClippingTasksComponent } from '@components/admin-videos/clipping-tasks/clipping-tasks.component';
+import { ChartComponent } from './components/admin-dashboard/chart/chart.component';
+import { EditUserComponent } from './components/researchers-list/edit-user/edit-user.component';
 
 @NgModule({
   declarations: [
@@ -42,6 +48,12 @@ import { ResearchersListComponent } from './components/researchers-list/research
     AdminManageComponent,
     AdminVideosComponent,
     ResearchersListComponent,
+    RegisterComponent,
+    AddTasksComponent,
+    EditTasksComponent,
+    ClippingTasksComponent,
+    ChartComponent,
+    EditUserComponent,
   ],
   imports: [
     BrowserModule,

@@ -16,19 +16,6 @@
     السابق
   </button>
   <div class="flex items-start justify-start gap-0.5">
-    <!-- <span
-      *ngFor="let page of totalPagesArray()"
-      class="flex cursor-pointer items-center justify-center"
-    >
-      <a
-        class="flex h-10 w-10 items-center justify-center rounded-lg"
-        (click)="onPageChange(page)"
-        [class.active]="page === currentPage"
-      >
-        {{ page }}
-      </a>
-    </span> -->
-
     <ng-container *ngFor="let page of totalPagesArray()">
       <ng-container *ngIf="page === '...'">
         <a
@@ -38,7 +25,7 @@
       </ng-container>
       <ng-container *ngIf="page !== '...'">
         <a
-          class="flex h-10 w-10 items-center justify-center rounded-lg"
+          class="flex h-10 w-10 items-center justify-center rounded-lg cursor-pointer"
           (click)="onPageChange(page)"
           [class.active]="page === currentPage"
         >
@@ -48,15 +35,6 @@
     </ng-container>
   </div>
   <div class="flex items-start justify-start rounded-lg">
-    <!-- <button
-      class="flex cursor-pointer items-start justify-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3.5 py-2 text-sm font-normal leading-tight text-slate-700 shadow"
-      [ngClass]="{
-        'cursor-not-allowed': currentPage === totalPagesArray().length || totalPagesArray().length === 0,
-        'cursor-pointer': currentPage !== totalPagesArray().length,
-      }"
-      [disabled]="currentPage === totalPagesArray().length || totalPagesArray().length === 0"
-      (click)="onPageChange(currentPage + 1)"
-    > -->
     <button
       class="flex cursor-pointer items-start justify-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3.5 py-2 text-sm font-normal leading-tight text-slate-700 shadow"
       [ngClass]="{

@@ -5,11 +5,12 @@
     <div
       class="flex w-full items-center justify-between border-b border-gray-200 pb-6"
     >
-      <div
+      <button
+        (click)="isAddingTask = true"
         class="flex items-center justify-center rounded-lg bg-blue-600 px-4 pb-2.5 pt-2 text-center text-base font-normal leading-relaxed text-white"
       >
         إضافة مهام
-      </div>
+      </button>
       <div class="text-center text-2xl font-normal leading-9 text-gray-700">
         لوحة التحكم
       </div>
@@ -18,74 +19,7 @@
       <div
         class="flex h-72 w-1/2 flex-col items-end justify-start gap-6 rounded-lg border border-gray-200 px-6 py-4 shadow-sm"
       >
-        <div class="text-center text-2xl font-normal leading-9 text-gray-700">
-          الرسم البياني للمهام
-        </div>
-        <div
-          class="flex h-[175px] flex-col items-start justify-start gap-3 self-stretch"
-        >
-          <div class="relative h-[155px] w-[488px]">
-            <div
-              class="absolute left-0 top-0 inline-flex h-[155px] w-[488px] items-center justify-start gap-3"
-            >
-              <div class="relative h-[145.23px] shrink grow basis-0">
-                <div
-                  class="absolute left-0 top-[4.24px] h-[140.09px] w-[454px]"
-                ></div>
-                <div
-                  class="absolute left-[1.70px] top-0 h-[145.23px] w-[452.30px]"
-                ></div>
-              </div>
-              <div
-                class="text-black/opacity-30 text-right text-xs font-normal leading-[18.16px]"
-              >
-                500<br /><br />300<br /><br />200<br /><br />100<br /><br />50
-              </div>
-            </div>
-            <div
-              class="absolute left-[281px] top-[29px] h-[17.08px] w-[17.08px]"
-            >
-              <div
-                class="absolute left-0 top-0 h-[17.08px] w-[17.08px] rounded-full bg-white shadow"
-              ></div>
-              <div
-                class="absolute left-[4.13px] top-[4.37px] h-[8.54px] w-[8.54px] rounded-full bg-purple-700 shadow"
-              ></div>
-            </div>
-          </div>
-          <div class="inline-flex w-[451px] items-center justify-end gap-4">
-            <div
-              class="text-right text-xs font-normal leading-[18.16px] text-gray-500"
-            >
-              يونيو
-            </div>
-            <div
-              class="text-right text-xs font-normal leading-[18.16px] text-gray-500"
-            >
-              مايو
-            </div>
-            <div
-              class="text-right text-xs font-normal leading-[18.16px] text-gray-500"
-            >
-              أبريل
-            </div>
-            <div
-              class="text-right text-xs font-normal leading-[18.16px] text-gray-500"
-            >
-              مارس
-            </div>
-            <div
-              class="text-right text-xs font-normal leading-[18.16px] text-gray-500"
-            >
-              فبراير
-            </div>
-            <div
-              class="text-right text-xs font-normal leading-[18.16px] text-gray-500"
-            >
-              يناير
-            </div>
-          </div>
-        </div>
+        <app-chart class="w-full"></app-chart>
       </div>
       <app-task-statistics class="w-1/2"></app-task-statistics>
     </div>
@@ -94,7 +28,8 @@
     >
       <div class="flex items-center justify-between self-stretch px-6 py-4">
         <div
-          class="flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 shadow-sm"
+          routerLink="/researchers"
+          class="flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 shadow-sm cursor-pointer"
         >
           <img src="assets/arrow.svg" alt="icon" />
           <div class="text-sm font-medium leading-snug text-gray-600">
@@ -129,7 +64,7 @@
               [ngClass]="{
                 'bg-gray-50': i % 2 === 0,
                 'bg-white': i % 2 !== 0,
-                'border-b border-gray-200 rounded-b-xl': !last,
+                'rounded-b-xl border-b border-gray-200': !last,
               }"
               class="h-20 text-sm font-medium"
             >
@@ -172,8 +107,11 @@
                   >
                 </div>
               </td>
-              <td>
-                <img src="assets/edit.svg" alt="icon" class="cursor-pointer" />
+              <td
+                (click)="onEditTask(researcher.user_id)"
+                class="flex h-20 cursor-pointer items-center justify-center"
+              >
+                <img src="assets/edit.svg" alt="icon" />
               </td>
             </tr>
           </tbody>
@@ -182,8 +120,18 @@
       <!-- <app-pagination class="w-full" [totalItems]="totalItems" [itemsPerPage]="itemsPerPage" (pageChange)="setPage($event)"></app-pagination> -->
     </div>
   </div>
-  <!-- <div class="w-[300px] fixed right-0"> -->
   <div class="w-[300px]">
     <app-sidebar></app-sidebar>
   </div>
 </div>
+<app-add-tasks
+  *ngIf="isAddingTask"
+  (close)="isAddingTask = false"
+  (taskAdded)="onTaskAdded()"
+></app-add-tasks>
+<app-edit-tasks
+  *ngIf="isEditingTask"
+  [defaultUserId]="selectedUserId"
+  (close)="isEditingTask = false"
+  (taskEdited)="onTaskEdited()"
+></app-edit-tasks>

@@ -1,0 +1,15 @@
+<div class="flex flex-col gap-2">
+  <div  class="flex justify-between items-center">
+    <div dir="rtl">
+      <select id="monthSelect" class="outline-none" (change)="onMonthChange($event.target.value)">
+        <option *ngFor="let month of months" [value]="month">
+          {{ month }}
+        </option>
+      </select>
+    </div>
+    <div class="text-right text-2xl font-normal leading-9 text-[#36394a]">
+      الرسم البياني للمهام
+    </div>
+  </div>
+  <canvas id="area-chart" class="max-h-[220px]"></canvas>
+</div>

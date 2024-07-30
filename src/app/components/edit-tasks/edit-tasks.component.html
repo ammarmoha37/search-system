@@ -1,0 +1,270 @@
+<div
+  (click)="close.emit()"
+  class="fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center bg-black bg-opacity-70 font-readex"
+>
+  <div
+    (click)="onClickInside($event)"
+    class="flex w-[500px] flex-col items-center justify-center gap-5 rounded-2xl border border-gray-200 bg-white p-6"
+  >
+    <div>
+      <div class="relative left-60 cursor-pointer" (click)="close.emit()">
+        <img src="assets/gray-close.svg" alt="icon" />
+      </div>
+      <div class="flex h-20 w-20 items-center justify-center">
+        <div
+          class="flex items-center justify-center rounded-full border border-b-0 bg-gradient-to-b from-gray-100 to-white p-4"
+        >
+          <div
+            class="flex h-12 w-12 items-center justify-center rounded-full border bg-white shadow-sm"
+          >
+            <img class="h-5 w-5" src="assets/edit-blue.svg" alt="icon" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flex flex-col items-center justify-center gap-2">
+      <div class="text-[32px] font-medium leading-[44.80px]">تعديل المهام</div>
+    </div>
+    <form
+      [formGroup]="editTaskForm"
+      (ngSubmit)="onSubmit()"
+      class="flex flex-col items-start justify-start gap-4 self-stretch"
+    >
+      <div class="flex flex-col items-start justify-start gap-5 self-stretch">
+        <div class="flex items-center justify-center gap-2 self-stretch">
+          <div
+            class="flex shrink grow basis-0 flex-col items-end justify-start gap-2"
+          >
+            <div class="flex items-center justify-end gap-2 self-stretch">
+              <div
+                class="shrink grow basis-0 text-right text-sm font-medium leading-tight tracking-tight"
+              >
+                الي
+              </div>
+            </div>
+            <div
+              class="flex items-center justify-start gap-2 self-stretch rounded-lg border border-gray-200 bg-white px-3 py-2"
+            >
+              <select
+                dir="rtl"
+                formControlName="toUser"
+                class="shrink grow basis-0 text-right font-medium leading-tight tracking-tight outline-none"
+              >
+                <option value="" disabled selected>اختر الباحث</option>
+                <option
+                  *ngFor="let to_researcher of filteredResearchers"
+                  [value]="to_researcher.user_id"
+                >
+                  {{ to_researcher.user_name }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div (click)="swapUsers()" class="flex h-12 cursor-pointer items-end">
+            <img src="assets/transfer.svg" alt="icon" />
+          </div>
+          <div
+            class="flex shrink grow basis-0 flex-col items-end justify-start gap-2"
+          >
+            <div class="flex items-center justify-end gap-2 self-stretch">
+              <div
+                class="shrink grow basis-0 text-right text-sm font-medium leading-tight tracking-tight"
+              >
+                من
+              </div>
+            </div>
+            <div
+              class="flex items-center justify-start gap-2 self-stretch rounded-lg border border-blue-600 bg-white px-3 py-2 shadow"
+            >
+              <select
+                dir="rtl"
+                formControlName="fromUser"
+                class="shrink grow basis-0 text-right font-normal tracking-tight outline-none"
+              >
+                <option value="" disabled selected>اختر الباحث</option>
+                <option
+                  *ngFor="let from_researcher of researchers"
+                  [value]="from_researcher.user_id"
+                  [selected]="from_researcher.user_id === defaultUserId"
+                >
+                  {{ from_researcher.user_name }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div
+          *ngIf="
+            editTaskForm.get('toUser')?.invalid &&
+            (editTaskForm.get('toUser')?.dirty ||
+              editTaskForm.get('toUser')?.touched)
+          "
+          class="text-red-600"
+        >
+          إلى الباحث مطلوب
+        </div>
+
+        <div class="flex flex-col items-end justify-end gap-4 self-stretch">
+          <div class="flex items-center justify-start gap-6">
+            <div class="flex items-center justify-start gap-1.5">
+              <div class="text-right text-base font-normal leading-snug">
+                فردي
+              </div>
+              <input
+                type="radio"
+                name="taskType"
+                value="individual"
+                formControlName="taskType"
+                class="h-5 w-5"
+              />
+            </div>
+            <div class="flex items-center justify-start gap-1.5">
+              <div class="text-right text-base font-normal leading-snug">
+                متعدد
+              </div>
+              <input
+                type="radio"
+                name="taskType"
+                value="multiple"
+                formControlName="taskType"
+                class="h-5 w-5"
+                checked
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          *ngIf="editTaskForm.get('taskType')?.value === 'multiple'"
+          class="flex items-start justify-start gap-3 self-stretch"
+        >
+          <div
+            class="flex w-1/2 flex-col items-end justify-start gap-2 self-stretch"
+          >
+            <div class="flex items-center justify-start gap-2">
+              <div class="text-right text-sm font-medium leading-snug">إلى</div>
+            </div>
+            <div
+              class="flex items-center justify-start gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2"
+            >
+              <input
+                type="number"
+                formControlName="to"
+                class="text-right text-base font-normal leading-relaxed outline-none"
+                placeholder="0"
+                (focus)="clearInitialValue('to')"
+              />
+            </div>
+            <div
+              *ngIf="
+                editTaskForm.get('to')?.invalid &&
+                (editTaskForm.get('to')?.dirty ||
+                  editTaskForm.get('to')?.touched)
+              "
+              class="text-red-600"
+            >
+              إلى الفيديوهات مطلوب
+            </div>
+          </div>
+          <div class="flex w-1/2 flex-col items-end justify-start gap-2">
+            <div class="flex items-center justify-start gap-2">
+              <div
+                class="shrink grow basis-0 text-right text-sm font-medium leading-snug"
+              >
+                من
+              </div>
+            </div>
+            <div
+              class="flex items-center justify-start gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2"
+            >
+              <input
+                type="number"
+                formControlName="from"
+                class="text-right text-base font-normal leading-relaxed outline-none"
+                placeholder="0"
+                (focus)="clearInitialValue('from')"
+              />
+            </div>
+            <div
+              *ngIf="
+                editTaskForm.get('from')?.invalid &&
+                (editTaskForm.get('from')?.dirty ||
+                  editTaskForm.get('from')?.touched)
+              "
+              class="text-red-600"
+            >
+              من الفيديوهات مطلوب
+            </div>
+          </div>
+        </div>
+        <div
+          *ngIf="fromToVideosError"
+          class="flex justify-end self-stretch text-sm"
+        >
+          <span class="text-red-600">{{ fromToVideosError }}</span>
+        </div>
+        <div
+          *ngIf="editTaskForm.get('taskType')?.value === 'individual'"
+          class="flex w-full items-start justify-start gap-3 self-stretch"
+        >
+          <div
+            class="flex shrink grow basis-0 flex-col items-end justify-start gap-1.5"
+          >
+            <div class="flex items-center justify-start gap-2 self-stretch">
+              <div
+                class="shrink grow basis-0 text-right text-sm font-medium leading-snug"
+              >
+                عدد الفيديوهات
+              </div>
+            </div>
+            <div
+              [ngClass]="{
+                'border-red-500': videosNumbersError,
+                'border-gray-200': !videosNumbersError,
+              }"
+              class="flex items-center justify-start gap-2 self-stretch rounded-lg border bg-white px-3 py-2"
+            >
+              <input
+                type="number"
+                formControlName="videosNumbers"
+                class="w-full text-right text-base font-normal leading-relaxed outline-none"
+                placeholder="0"
+                (focus)="clearInitialValue('videosNumbers')"
+              />
+            </div>
+            <div
+              *ngIf="
+                editTaskForm.get('videosNumbers')?.invalid &&
+                (editTaskForm.get('videosNumbers')?.dirty ||
+                  editTaskForm.get('videosNumbers')?.touched)
+              "
+              class="w-full text-red-600"
+            >
+              عدد الفيديوهات مطلوب
+            </div>
+            <div
+              *ngIf="videosNumbersError"
+              class="flex justify-end self-stretch text-sm"
+            >
+              <span class="text-red-600">{{ videosNumbersError }}</span>
+            </div>
+          </div>
+        </div>
+        <button
+          type="submit"
+          [ngClass]="{
+            'cursor-pointer bg-blue-600': editTaskForm.valid,
+            'cursor-not-allowed bg-gray-400': editTaskForm.invalid,
+          }"
+          [disabled]="editTaskForm.invalid"
+          class="flex h-[52px] items-center justify-center gap-2 self-stretch rounded-xl px-4 py-2"
+        >
+          <div
+            class="text-center text-base font-medium leading-relaxed text-white"
+          >
+            اضف الان
+          </div>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

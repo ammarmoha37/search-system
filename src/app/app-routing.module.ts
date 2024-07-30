@@ -21,6 +21,42 @@ const routes: Routes = [
   { path: 'profile', component: ProfileComponent },
   { path: 'video-tasks', component: VideoTasksComponent },
   { path: 'welcome', component: WelcomeComponent },
+
+// { path: '', redirectTo: '/login', pathMatch: 'full' },
+//   { path: 'login', component: LoginComponent },
+//   {
+//     path: 'admin-dashboard',
+//     component: AdminDashboard,
+//     canActivate: [AuthGuard],
+//   },
+//   {
+//     path: 'tasks-manage',
+//     component: AdminManageComponent,
+//     canActivate: [AuthGuard],
+//   },
+//   {
+//     path: 'researcher-videos',
+//     component: VideosComponent,
+//     canActivate: [AuthGuard],
+//   },
+//   {
+//     path: 'admin-videos',
+//     component: AdminVideosComponent,
+//     canActivate: [AuthGuard],
+//   },
+//   {
+//     path: 'researchers',
+//     component: ResearchersListComponent,
+//     canActivate: [AuthGuard],
+//   },
+//   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
+//   {
+//     path: 'video-tasks',
+//     component: VideoTasksComponent,
+//     canActivate: [AuthGuard],
+//   },
+//   { path: 'welcome', component: WelcomeComponent, canActivate: [AuthGuard] },
+// ];
 ];
 
 @NgModule({

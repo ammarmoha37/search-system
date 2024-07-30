@@ -12,14 +12,47 @@
     <div
       class="flex flex-col items-start justify-start self-stretch rounded-xl border border-gray-200 bg-white"
     >
-      <div class="flex items-center justify-end gap-4 self-stretch px-6 py-4">
+      <div class="flex w-full justify-end gap-4">
+        <div class="flex w-64 justify-end self-stretch py-4">
+          <div class="w-full rounded-lg border border-zinc-200 px-3 py-2">
+            <select
+              dir="rtl"
+              class="w-full text-right font-normal leading-relaxed text-gray-500 outline-none"
+              (change)="onStatusChange($event)"
+            >
+              <option value="" selected>اختر الحالة</option>
+              <option value="Cutted">Clipped</option>
+              <option value="Waiting">Waiting</option>
+              <option value="Failed">Failed</option>
+            </select>
+          </div>
+        </div>
+        <div class="flex justify-end self-stretch pr-6 py-4">
+          <div
+            class="flex justify-between gap-2 rounded-lg border border-gray-200 p-2 shadow-sm"
+          >
+            <input
+              dir="rtl"
+              type="text"
+              placeholder="بحث بالكود"
+              class="w-56 outline-none"
+              [(ngModel)]="searchTerm"
+              (input)="onSearchChange()"
+            />
+            <img src="assets/search.svg" alt="icon" />
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center justify-end gap-4 self-stretch">
         <table class="min-w-full bg-white" dir="rtl">
           <thead class="border-y border-gray-200">
             <tr
               class="w-full self-stretch border-b border-gray-200 text-right text-sm text-gray-600"
             >
               <th class="px-6 py-4 font-medium">كود الفيديو</th>
-              <th class="px-6 py-4 font-medium"><div class="w-12 justify-center flex">المدة</div></th>
+              <th class="px-6 py-4 font-medium">
+                <div class="flex w-12 justify-center">المدة</div>
+              </th>
               <th class="px-6 py-4 font-medium">عدد المقاطع</th>
               <th class="px-6 py-4 font-medium">الحالة</th>
             </tr>
@@ -41,7 +74,9 @@
                 </div>
               </td>
               <td class="px-6 py-4">
-                <div class="flex items-center justify-center w-20 text-gray-800">
+                <div
+                  class="flex w-20 items-center justify-center text-gray-800"
+                >
                   {{ video.number_of_clips }} مقطع
                 </div>
               </td>
@@ -62,7 +97,12 @@
           </tbody>
         </table>
       </div>
-      <app-pagination class="w-full" [totalItems]="totalItems" [itemsPerPage]="itemsPerPage" (pageChange)="setPage($event)"></app-pagination>
+      <app-pagination
+        class="w-full"
+        [totalItems]="totalItems"
+        [itemsPerPage]="itemsPerPage"
+        (pageChange)="setPage($event)"
+      ></app-pagination>
     </div>
   </div>
   <div class="w-[300px]">
