@@ -17,13 +17,35 @@ import { AdminDashboardService } from '@services/admin-dashboard.service';
 })
 export class ClippingTasksComponent implements OnInit {
   @Output() close = new EventEmitter<void>();
+  @Output() videoClipped = new EventEmitter<void>();
   @Input() defaultVideoId: number | null = null;
+
   expandedClips: boolean[] = [];
   videoDetails: any = {};
   initialVideoDetails: any = {};
   clips: any[] = [];
   initialClips: any[] = [];
   fileInputs: any[] = [];
+  successMessage: string | null = null;
+
+  countrySuggestions: string[] = [];
+  showCountrySuggestions = false;
+  countries = [];
+  eventTypeSuggestions: string[] = [];
+  showEventTypeSuggestions = false;
+  // addresses = [];
+  // addressSuggestions: string[] = [];
+  // showAddressSuggestions = false;
+  events = [];
+  personSuggestions: string[] = [];
+  showPersonSuggestions = false;
+  persons = [];
+  focusedPersonIndex: { clipIndex: number; personIndex: number } | null = null;
+
+  customErrors = {
+    startTimeAfterEndTime: false,
+    endTimeAfterDuration: false,
+  };
 
   constructor(
     private el: ElementRef,
@@ -49,8 +71,14 @@ export class ClippingTasksComponent implements OnInit {
       next: (data) => {
         this.videoDetails = data.video;
         this.clips = data.clips;
+        this.countries = data.countries.map((item: any) => item.country);
+        // this.addresses = data.addresses.map((item: any) => item.address);
+        this.events = data.events.map((item: any) => item.type_name);
+        this.persons = data.persons;
+        console.log(this.persons);
+
         this.initialVideoDetails = { ...this.videoDetails };
-        this.initialClips = JSON.parse(JSON.stringify(this.clips)); // Deep clone clips
+        this.initialClips = JSON.parse(JSON.stringify(this.clips));
 
         console.log('Fetched Video Details:', data);
       },
@@ -58,6 +86,10 @@ export class ClippingTasksComponent implements OnInit {
         console.error('Error fetching video details:', error);
       },
     });
+  }
+
+  trackByPerson(index: number, person: any): any {
+    return person.id || index;
   }
 
   getClipStatusMessage(clip_status: number): string {
@@ -73,59 +105,219 @@ export class ClippingTasksComponent implements OnInit {
     }
   }
 
-  hasVideoChanges(): boolean {
-    return (
-      JSON.stringify(this.videoDetails) !==
-      JSON.stringify(this.initialVideoDetails)
+  validateTimes(start_time: string, end_time: string) {
+    console.log('validateTimes called');
+
+    this.customErrors.startTimeAfterEndTime = false;
+    this.customErrors.endTimeAfterDuration = false;
+
+    const startTime = this.parseTime(start_time);
+    const endTime = this.parseTime(end_time);
+    const duration = this.parseTime(this.videoDetails.video_duration);
+
+    console.log(this.videoDetails.video_duration);
+
+    console.log(
+      'startTime:',
+      startTime,
+      'endTime:',
+      endTime,
+      'duration:',
+      duration,
     );
+
+    if (startTime !== null && endTime !== null) {
+      if (startTime >= endTime) {
+        this.customErrors.startTimeAfterEndTime = true;
+        console.log(this.customErrors.startTimeAfterEndTime);
+      }
+
+      if (endTime > duration) {
+        this.customErrors.endTimeAfterDuration = true;
+      }
+    }
   }
 
-  hasClipChanges(): boolean {
-    return JSON.stringify(this.clips) !== JSON.stringify(this.initialClips);
+  parseTime(timeStr: string) {
+    const timeParts = timeStr.split(':');
+    if (timeParts.length === 3) {
+      return +timeParts[0] * 3600 + +timeParts[1] * 60 + +timeParts[2];
+    }
+    return null;
   }
 
-  hasClipChanged(clipIndex: number): boolean {
-    return (
-      JSON.stringify(this.clips[clipIndex]) !==
-      JSON.stringify(this.initialClips[clipIndex])
-    );
+  normalizeArabic(text: string): string {
+    return text.replace(/أ|إ|آ/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي');
   }
 
-  // if (this.hasVideoChanges() || this.hasClipChanges()) {
-  //   console.log('data changed');
-  //   console.log(this.initialVideoDetails);
-  //   console.log(this.videoDetails);
-  //   console.log(this.initialClips);
-  //   console.log(this.clips);
+  // showAllAddressSuggestions() {
+  //   this.addressSuggestions = [...this.addresses];
+  //   this.showAddressSuggestions = true;
   // }
 
-  // if (this.hasClipChanged(clipIndex)) {
-  //   console.log('clip data changed');
-  //   console.log(this.initialClips);
-  //   console.log(this.clips);
+  showAllCountrySuggestions(): void {
+    this.countrySuggestions = [...this.countries];
+    this.showCountrySuggestions = true;
+  }
 
+  showAllEventSuggestions(): void {
+    this.eventTypeSuggestions = [...this.events];
+    this.showEventTypeSuggestions = true;
+  }
+
+  filterEventTypeSuggestions(query: string): void {
+    if (query) {
+      const normalizedQuery = this.normalizeArabic(query);
+      this.eventTypeSuggestions = this.events.filter((eventType) =>
+        this.normalizeArabic(eventType).includes(normalizedQuery),
+      );
+    } else {
+      this.showAllEventSuggestions();
+    }
+  }
+
+  selectEventTypeSuggestion(suggestion: string): void {
+    this.videoDetails.event_type = suggestion;
+    this.showEventTypeSuggestions = false;
+  }
+
+  // filterAddressSuggestions(query: string): void {
+  //   if (query) {
+  //     const normalizedQuery = this.normalizeArabic(query);
+  //     this.addressSuggestions = this.addresses.filter((address) =>
+  //       this.normalizeArabic(address).includes(normalizedQuery),
+  //     );
+  //   } else {
+  //     this.showAllAddressSuggestions();
+  //   }
   // }
+
+  // selectAddressSuggestion(suggestion: string): void {
+  //   this.videoDetails.addresses = suggestion;
+  //   this.showAddressSuggestions = false;
+  // }
+
+  filterCountrySuggestions(query: string): void {
+    if (query) {
+      const normalizedQuery = this.normalizeArabic(query);
+      this.countrySuggestions = this.countries.filter((country) =>
+        this.normalizeArabic(country).includes(normalizedQuery),
+      );
+    } else {
+      this.showAllCountrySuggestions();
+    }
+  }
+
+  selectCountrySuggestion(suggestion: string): void {
+    this.videoDetails.country = suggestion;
+    this.showCountrySuggestions = false;
+  }
+
+  filterPersonSuggestions(
+    query: string,
+    clipIndex: number,
+    personIndex: number,
+  ): void {
+    if (query) {
+      const normalizedQuery = this.normalizeArabic(query);
+      this.personSuggestions = this.persons.filter((person) =>
+        this.normalizeArabic(person.character_name).includes(normalizedQuery),
+      );
+      this.focusedPersonIndex = { clipIndex, personIndex };
+    } else {
+      this.personSuggestions = [];
+      this.focusedPersonIndex = null;
+    }
+  }
+
+  onFocusPersonInput(clipIndex: number, personIndex: number) {
+    this.focusedPersonIndex = { clipIndex, personIndex };
+  }
+
+  selectPersonSuggestion(
+    clipIndex: number,
+    personIndex: number,
+    suggestion: any,
+  ): void {
+    this.clips[clipIndex].persons[personIndex].name = suggestion.character_name;
+    this.clips[clipIndex].persons[personIndex].photo = suggestion.photo;
+
+    this.personSuggestions = [];
+    this.focusedPersonIndex = null;
+  }
 
   updateVideo() {
-    const videoData = {
-      videoDetails: this.videoDetails,
-      clips: this.clips,
-    };
+    const formData = new FormData();
 
-    console.log(videoData);
+    formData.append('videoDetails', JSON.stringify(this.videoDetails));
 
-    this.adminService.updateVideoData(videoData).subscribe({
+    this.clips.forEach((clip, clipIndex) => {
+      formData.append(`clips[${clipIndex}][clip_id]`, clip.clip_id.toString());
+      formData.append(`clips[${clipIndex}][key]`, clip.key);
+      formData.append(`clips[${clipIndex}][start_time]`, clip.start_time);
+      formData.append(`clips[${clipIndex}][end_time]`, clip.end_time);
+      formData.append(`clips[${clipIndex}][clip_title]`, clip.clip_title);
+      formData.append(
+        `clips[${clipIndex}][clip_status]`,
+        clip.clip_status.toString(),
+      );
+      formData.append(`clips[${clipIndex}][thumbnail]`, clip.thumbnail);
+      formData.append(`clips[${clipIndex}][caption]`, clip.caption);
+
+      clip.persons.forEach((person, personIndex) => {
+        formData.append(
+          `clips[${clipIndex}][persons][${personIndex}][name]`,
+          person.name,
+        );
+
+        if (person.photo) {
+          formData.append(
+            `clips[${clipIndex}][persons][${personIndex}][photo]`,
+            person.photo,
+          );
+        }
+      });
+    });
+
+    console.log('FormData:', formData);
+
+    this.adminService.updateVideoData(formData).subscribe({
       next: () => {
         console.log('Video and clips updated successfully');
-        console.log(videoData);
+        this.successMessage = 'تم حفظ البيانات بنجاح';
+        setTimeout(() => {
+          this.successMessage = null;
+        }, 5000);
 
-        this.initialVideoDetails = { ...this.videoDetails };
-        this.initialClips = JSON.parse(JSON.stringify(this.clips));
+        // this.initialVideoDetails = { ...this.videoDetails };
+        // this.initialClips = JSON.parse(JSON.stringify(this.clips));
+
+        this.fetchVideoDetails(this.defaultVideoId);
       },
       error: (error) => {
         console.error('Error updating video details:', error);
       },
     });
+  }
+
+  handleFileInput(event: Event, clipIndex: number, personIndex: number): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      const person = this.clips[clipIndex]?.persons[personIndex];
+
+      if (person) {
+        person.photo = file;
+        console.log(person.photo);
+      }
+    }
+  }
+
+  getPersonPhotoUrl(file: File): any {
+    if (file instanceof File) {
+      return this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(file));
+    }
+    return file;
   }
 
   cutAllVideo(): void {
@@ -141,6 +333,7 @@ export class ClippingTasksComponent implements OnInit {
       next: (response) => {
         console.log('Video cut successfully:', response);
         this.close.emit();
+        this.videoClipped.emit();
       },
       error: (error) => {
         console.error('Error cutting video:', error);
@@ -229,28 +422,5 @@ export class ClippingTasksComponent implements OnInit {
 
   deletePerson(clipIndex: number, personIndex: number): void {
     this.clips[clipIndex].persons.splice(personIndex, 1);
-  }
-
-  handleFileInput(event: any, clipIndex: number, personIndex: number) {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
-      const reader = new FileReader();
-
-      reader.onload = (e: any) => {
-        const photoUrl = e.target.result;
-        const person = this.clips[clipIndex].persons[personIndex];
-        person.photo = photoUrl;
-      };
-
-      reader.readAsDataURL(file);
-    }
-  }
-
-  getPersonPhotoUrl(file: File): any {
-    if (file instanceof File) {
-      return this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(file));
-    }
-    return this.sanitizer.bypassSecurityTrustUrl(file);
   }
 }

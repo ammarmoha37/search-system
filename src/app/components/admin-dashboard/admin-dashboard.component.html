@@ -17,11 +17,11 @@
     </div>
     <div class="flex h-72 w-full items-start justify-between gap-6">
       <div
-        class="flex h-72 w-1/2 flex-col items-end justify-start gap-6 rounded-lg border border-gray-200 px-6 py-4 shadow-sm"
+        class="flex h-72 xl:w-[45%] 2xl:w-1/2 flex-col items-end justify-start gap-6 rounded-lg border border-gray-200 px-6 py-4 shadow-sm"
       >
         <app-chart class="w-full"></app-chart>
       </div>
-      <app-task-statistics class="w-1/2"></app-task-statistics>
+      <app-task-statistics class="w-[55%] 2xl:w-1/2"></app-task-statistics>
     </div>
     <div
       class="flex w-full flex-col items-start justify-start rounded-xl border border-gray-200 bg-white"
@@ -47,10 +47,10 @@
             <tr
               class="w-full self-stretch border-b border-gray-200 text-right text-sm text-gray-600"
             >
-              <th class="w-[270px] px-6 py-4 font-medium">اسم الباحث</th>
-              <th class="w-[270px] px-6 py-4 font-medium">المهام المكلف بها</th>
-              <th class="w-[270px] px-6 py-4 font-medium">المهام المنجزة</th>
-              <th class="w-[270px] px-6 py-4 font-medium">نسبة الإنجاز</th>
+              <th class="xl:w-56 2xl:w-64 px-6 py-4 font-medium">اسم الباحث</th>
+              <th class="xl:w-56 2xl:w-64 px-6 py-4 font-medium">المهام المكلف بها</th>
+              <th class="xl:w-56 2xl:w-64 px-6 py-4 font-medium">المهام المنجزة</th>
+              <th class="xl:w-56 2xl:w-64 px-6 py-4 font-medium">نسبة الإنجاز</th>
               <th></th>
             </tr>
           </thead>
@@ -109,7 +109,7 @@
               </td>
               <td
                 (click)="onEditTask(researcher.user_id)"
-                class="flex h-20 cursor-pointer items-center justify-center"
+                class="flex h-20 cursor-pointer items-center justify-end xl:pl-2 2xl:pl-5"
               >
                 <img src="assets/edit.svg" alt="icon" />
               </td>

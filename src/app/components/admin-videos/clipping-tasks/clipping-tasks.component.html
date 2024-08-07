@@ -1,12 +1,13 @@
+<div
+  (click)="close.emit()"
+  class="fixed left-0 top-0 z-50 flex h-full w-full justify-end bg-black bg-opacity-70 font-readex"
+>
   <div
-    (click)="close.emit()"
-    class="fixed left-0 top-0 z-50 flex h-full w-full justify-end bg-black bg-opacity-70 font-readex"
+    (click)="onClickInside($event)"
+    class="flex w-[539px] flex-col items-end justify-start overflow-auto rounded-xl border border-gray-200 bg-white p-6 shadow"
   >
-    <div
-      (click)="onClickInside($event)"
-      class="flex w-[539px] flex-col items-end justify-start overflow-auto rounded-xl border border-gray-200 bg-white p-6 shadow"
-    >
-      <div class="flex flex-col items-end justify-start self-stretch">
+    <div class="flex flex-col items-end justify-start self-stretch">
+      <form #clipForm="ngForm">
         <div
           class="flex items-center justify-between self-stretch border-b border-gray-200 pb-4"
         >
@@ -53,7 +54,14 @@
           </div>
           <div class="flex items-center justify-end gap-6">
             <div class="text-right text-base font-normal leading-none">
-              {{ videoDetails.video_duration }}
+              <input
+                type="text"
+                name="duration"
+                [(ngModel)]="videoDetails.video_duration"
+                class="w-16 bg-transparent outline-none"
+                disabled
+                #duration="ngModel"
+              />
             </div>
             <div class="flex h-5 w-32 items-center justify-end gap-2">
               <div class="text-sm font-normal leading-[14px] text-[#565e73]">
@@ -64,72 +72,184 @@
               </div>
             </div>
           </div>
-          <div class="flex items-center justify-end gap-6">
-            <div class="text-right text-base font-normal leading-none" dir="rtl">
-              <input
-                type="date"
-                [(ngModel)]="videoDetails.event_date"
-                class="w-24 outline-none"
-              />
-            </div>
-            <div class="flex h-5 w-32 items-center justify-end gap-2">
-              <div class="text-sm font-normal leading-[14px] text-[#565e73]">
-                التاريخ
+          <div class="flex flex-col gap-1">
+            <div class="flex items-center justify-end gap-6">
+              <div
+                class="text-right text-base font-normal leading-none"
+                dir="rtl"
+              >
+                <input
+                  dir="rtl"
+                  type="date"
+                  name="date"
+                  [(ngModel)]="videoDetails.event_date"
+                  class="w-32 bg-transparent outline-none"
+                  required
+                  #eventDate="ngModel"
+                />
               </div>
-              <div class="relative h-5 w-5">
-                <img src="assets/clips-date.svg" alt="icon" />
-              </div>
-            </div>
-          </div>
-          <div class="flex items-center justify-end gap-6">
-            <div class="text-right text-base font-normal leading-none" dir="rtl">
-              <input
-                type="text"
-                [(ngModel)]="videoDetails.event_type"
-                class="outline-none"
-              />
-            </div>
-            <div class="flex h-5 w-32 items-center justify-end gap-2">
-              <div class="text-sm font-normal leading-[14px] text-[#565e73]">
-                نوع الحدث
-              </div>
-              <div class="relative h-5 w-5">
-                <img src="assets/clips-type.svg" alt="icon" />
+              <div class="flex h-5 w-32 items-center justify-end gap-2">
+                <div class="text-sm font-normal leading-[14px] text-[#565e73]">
+                  التاريخ
+                </div>
+                <div class="relative h-5 w-5">
+                  <img src="assets/clips-date.svg" alt="icon" />
+                </div>
               </div>
             </div>
-          </div>
-          <div class="flex items-center justify-end gap-6 self-stretch">
-            <div class="text-right text-base font-normal leading-none" dir="rtl">
-              <input
-                type="text"
-                [(ngModel)]="videoDetails.address"
-                class="outline-none"
-              />
-            </div>
-            <div class="flex h-5 w-32 items-center justify-end gap-2">
-              <div class="text-sm font-normal leading-[14px] text-[#565e73]">
-                العنوان
-              </div>
-              <div class="relative h-5 w-5">
-                <img src="assets/clips-title.svg" alt="icon" />
-              </div>
+            <div
+              class="w-10/12 text-red-500"
+              *ngIf="
+                eventDate.invalid && (eventDate.dirty || eventDate.touched)
+              "
+            >
+              <div *ngIf="eventDate.errors?.required">تاريخ الحدث مطلوب</div>
             </div>
           </div>
-          <div class="flex items-center justify-end gap-6">
-            <div class="text-right text-base font-normal leading-none" dir="rtl">
-              <input
-                type="text"
-                [(ngModel)]="videoDetails.country"
-                class="outline-none"
-              />
+          <div class="flex flex-col gap-1">
+            <div class="flex items-center justify-end gap-6">
+              <div
+                class="text-right text-base font-normal leading-none"
+                dir="rtl"
+              >
+                <input
+                  type="text"
+                  name="eventType"
+                  [(ngModel)]="videoDetails.event_type"
+                  class="w-80 bg-transparent outline-none"
+                  required
+                  #eventType="ngModel"
+                  (input)="filterEventTypeSuggestions($event.target.value)"
+                  (focus)="showAllEventSuggestions()"
+                />
+                <div
+                  *ngIf="
+                    showEventTypeSuggestions && eventTypeSuggestions.length > 0
+                  "
+                  class="suggestions-list z-[1000] mt-3 max-h-52 w-full overflow-y-auto rounded-md border border-gray-200 bg-white"
+                >
+                  <div
+                    class="cursor-pointer p-2 hover:bg-[#f0f0f0]"
+                    dir="rtl"
+                    *ngFor="let suggestion of eventTypeSuggestions"
+                    (click)="selectEventTypeSuggestion(suggestion)"
+                  >
+                    {{ suggestion }}
+                  </div>
+                </div>
+              </div>
+              <div class="flex h-5 w-32 items-center justify-end gap-2">
+                <div class="text-sm font-normal leading-[14px] text-[#565e73]">
+                  نوع الحدث
+                </div>
+                <div class="relative h-5 w-5">
+                  <img src="assets/clips-type.svg" alt="icon" />
+                </div>
+              </div>
             </div>
-            <div class="flex h-5 w-32 items-center justify-end gap-2">
-              <div class="text-sm font-normal leading-[14px] text-[#565e73]">
-                الدولة
+            <div
+              class="w-10/12 text-red-500"
+              *ngIf="
+                eventType.invalid && (eventType.dirty || eventType.touched)
+              "
+            >
+              <div *ngIf="eventType.errors?.required">نوع الحدث مطلوب</div>
+            </div>
+          </div>
+          <div class="flex flex-col gap-1">
+            <div class="flex items-center justify-end gap-6 self-stretch">
+              <div
+                class="text-right text-base font-normal leading-none"
+                dir="rtl"
+              >
+                <textarea
+                  type="text"
+                  name="address"
+                  [(ngModel)]="videoDetails.address"
+                  class="h-10 w-80 bg-transparent leading-relaxed outline-none"
+                  required
+                  #address="ngModel"
+                  ></textarea>
+                  <!-- (input)="filterAddressSuggestions($event.target.value)"
+                  (focus)="showAllAddressSuggestions()" -->
+                <!-- <div
+                  *ngIf="
+                    showAddressSuggestions && addressSuggestions.length > 0
+                  "
+                  class="suggestions-list z-[1000] mt-3 max-h-52 w-full overflow-y-auto rounded-md border border-gray-200 bg-white"
+                >
+                  <div
+                    class="cursor-pointer p-2 hover:bg-[#f0f0f0]"
+                    dir="rtl"
+                    *ngFor="let suggestion of addressSuggestions"
+                    (click)="selectAddressSuggestion(suggestion)"
+                  >
+                    {{ suggestion }}
+                  </div>
+                </div> -->
               </div>
-              <div class="relative h-5 w-5">
-                <img src="assets/clips-location.svg" alt="icon" />
+              <div class="flex h-10 w-32 items-start justify-end gap-2">
+                <div class="text-sm font-normal leading-[14px] text-[#565e73]">
+                  العنوان
+                </div>
+                <div class="relative h-5 w-5">
+                  <img src="assets/clips-title.svg" alt="icon" />
+                </div>
               </div>
+            </div>
+            <div
+              class="w-10/12 text-red-500"
+              *ngIf="address.invalid && (address.dirty || address.touched)"
+            >
+              <div *ngIf="address.errors?.required">العنوان مطلوب</div>
+            </div>
+          </div>
+          <div class="flex flex-col gap-1">
+            <div class="flex items-center justify-end gap-6">
+              <div
+                class="text-right text-base font-normal leading-none"
+                dir="rtl"
+              >
+                <input
+                  type="text"
+                  name="country"
+                  [(ngModel)]="videoDetails.country"
+                  class="w-80 bg-transparent outline-none"
+                  required
+                  #country="ngModel"
+                  (input)="filterCountrySuggestions($event.target.value)"
+                  (focus)="showAllCountrySuggestions()"
+                />
+                <div
+                  *ngIf="
+                    showCountrySuggestions && countrySuggestions.length > 0
+                  "
+                  class="suggestions-list z-[1000] mt-3 max-h-52 w-full overflow-y-auto rounded-md border border-gray-200 bg-white"
+                >
+                  <div
+                    class="cursor-pointer p-2 hover:bg-[#f0f0f0]"
+                    dir="rtl"
+                    *ngFor="let suggestion of countrySuggestions"
+                    (click)="selectCountrySuggestion(suggestion)"
+                  >
+                    {{ suggestion }}
+                  </div>
+                </div>
+              </div>
+              <div class="flex h-5 w-32 items-center justify-end gap-2">
+                <div class="text-sm font-normal leading-[14px] text-[#565e73]">
+                  الدولة
+                </div>
+                <div class="relative h-5 w-5">
+                  <img src="assets/clips-location.svg" alt="icon" />
+                </div>
+              </div>
+            </div>
+            <div
+              class="w-10/12 text-red-500"
+              *ngIf="country.invalid && (country.dirty || country.touched)"
+            >
+              <div *ngIf="country.errors?.required">الدولة مطلوبة</div>
             </div>
           </div>
           <div class="flex items-center justify-end gap-6">
@@ -151,40 +271,65 @@
           </div>
         </div>
         <div
-          class="flex h-[296px] flex-col items-end justify-start gap-2 self-stretch border-t border-gray-200 pt-4"
+          class="flex flex-col items-end justify-start gap-2 self-stretch border-t border-gray-200 pt-4"
         >
-          <div class="flex items-center justify-between self-stretch">
+          <div class="flex flex-col gap-2 self-stretch">
             <div class="flex items-center justify-between gap-3 self-stretch">
-              <div
-                (click)="cutAllVideo()"
-                class="flex cursor-pointer items-center justify-center gap-2 rounded-md bg-[#0062ff] px-4 py-2 shadow"
-              >
+              <div class="flex items-center gap-3 self-stretch">
                 <div
-                  class="text-center text-xs font-medium leading-[17px] tracking-tight text-white"
+                  *ngIf="videoDetails.video_status !== 'cutted' ? true : null"
                 >
-                  تقطيع الكل
+                  <button
+                    type="submit"
+                    (click)="cutAllVideo()"
+                    [disabled]="clipForm.invalid"
+                    class="flex items-center justify-center gap-2 rounded-md bg-[#0062ff] px-4 py-2 shadow"
+                    [ngClass]="{
+                      'cursor-not-allowed': clipForm.invalid,
+                      'cursor-pointer': !clipForm.invalid,
+                    }"
+                  >
+                    <div
+                      class="text-center text-xs font-medium leading-[17px] tracking-tight text-white"
+                    >
+                      تقطيع الكل
+                    </div>
+                  </button>
                 </div>
-              </div>
-              <div
-                (click)="updateVideo()"
-                class="flex cursor-pointer items-center justify-center gap-2 rounded-md bg-sky-100 px-4 py-2 shadow-sm"
-              >
-                <div
-                  class="text-center text-xs font-medium leading-[17px] tracking-tight text-blue-500"
+                <button
+                  (click)="updateVideo()"
+                  [disabled]="clipForm.invalid"
+                  class="flex items-center justify-center gap-2 rounded-md bg-sky-100 px-4 py-2 shadow-sm"
+                  [ngClass]="{
+                    'cursor-not-allowed': clipForm.invalid,
+                    'cursor-pointer': !clipForm.invalid,
+                  }"
                 >
-                  حفظ تعديلات الكل
+                  <div
+                    class="text-center text-xs font-medium leading-[17px] tracking-tight text-blue-500"
+                  >
+                    حفظ تعديلات الكل
+                  </div>
+                </button>
+              </div>
+              <div class="flex h-8 items-start justify-end gap-3">
+                <div class="text-xl font-medium leading-7 text-black">
+                  المقاطع
+                </div>
+                <div
+                  class="flex items-center justify-start gap-2.5 rounded bg-[#edf8ff] p-1"
+                >
+                  <div class="relative h-6 w-6">
+                    <img src="assets/clips-clip.svg" alt="icon" />
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="flex h-8 items-start justify-end gap-3">
-              <div class="text-xl font-medium leading-7 text-black">المقاطع</div>
-              <div
-                class="flex items-center justify-start gap-2.5 rounded bg-[#edf8ff] p-1"
-              >
-                <div class="relative h-6 w-6">
-                  <img src="assets/clips-clip.svg" alt="icon" />
-                </div>
-              </div>
+            <div
+              *ngIf="successMessage"
+              class="flex w-full items-center justify-center text-green-500"
+            >
+              {{ successMessage }}
             </div>
           </div>
           <div
@@ -204,7 +349,7 @@
                 </div>
               </div>
               <div class="flex items-center justify-start gap-3">
-                <div>
+                <div *ngIf="clip.clip_status === 0 ? true : null">
                   <div
                     class="flex h-5 w-12 cursor-pointer justify-center"
                     (click)="deleteClip(i)"
@@ -242,6 +387,32 @@
               class="flex flex-col items-start justify-start gap-5 self-stretch border-b border-gray-200 bg-white py-4"
             >
               <div
+                *ngIf="clip.clip_status === 1 ? true : null"
+                class="flex flex-col items-start justify-start gap-1.5 self-stretch"
+              >
+                <div class="flex items-center justify-end gap-2 self-stretch">
+                  <div
+                    class="shrink grow basis-0 text-right text-sm font-medium leading-tight text-zinc-950"
+                  >
+                    رابط المقطع
+                  </div>
+                </div>
+                <div
+                  class="flex items-center justify-start gap-2 self-stretch rounded-lg border border-zinc-200 bg-white px-3 py-2 outline-none"
+                >
+                  <a
+                    [href]="clip.clip_aws_url"
+                    target="_blank"
+                    class="flex grow basis-0 cursor-pointer items-center justify-between text-right text-base font-normal leading-relaxed text-zinc-950 underline outline-none"
+                  >
+                    <div class="relative h-5 w-5">
+                      <img src="assets/link.svg" alt="icon" />
+                    </div>
+                    اضغط هنا
+                  </a>
+                </div>
+              </div>
+              <div
                 class="flex flex-col items-end justify-start gap-1.5 self-stretch"
               >
                 <div class="flex items-center justify-end gap-2 self-stretch">
@@ -251,9 +422,11 @@
                     التايم كود
                   </div>
                 </div>
-                <div class="flex items-start justify-start gap-1.5 self-stretch">
+                <div
+                  class="flex items-start justify-start gap-1.5 self-stretch"
+                >
                   <div
-                    class="flex h-[42px] shrink grow basis-0 items-center justify-start gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2"
+                    class="flex shrink grow basis-0 items-center justify-start gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2"
                   >
                     <div
                       class="shrink grow basis-0 text-right text-base font-normal leading-relaxed text-[#0d0d12]"
@@ -261,14 +434,23 @@
                     >
                       <input
                         type="text"
+                        name="to"
                         [(ngModel)]="clip.end_time"
                         placeholder="إلى"
-                        class="w-full outline-none"
+                        class="w-full bg-transparent outline-none"
+                        required
+                        [disabled]="clip.clip_status === 1 ? true : null"
+                        #endTime="ngModel"
+                        (ngModelChange)="
+                          validateTimes(startTime.value, endTime.value)
+                        "
+                        pattern="^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$"
+                        title="Format must be hh:mm:ss"
                       />
                     </div>
                   </div>
                   <div
-                    class="flex h-[42px] shrink grow basis-0 items-center justify-start gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2"
+                    class="flex shrink grow basis-0 items-center justify-start gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2"
                   >
                     <div
                       class="shrink grow basis-0 text-right text-base font-normal leading-relaxed text-[#0d0d12]"
@@ -276,102 +458,180 @@
                     >
                       <input
                         type="text"
+                        name="from"
                         [(ngModel)]="clip.start_time"
                         placeholder="من"
-                        class="w-full outline-none"
+                        class="w-full bg-transparent outline-none"
+                        required
+                        [disabled]="clip.clip_status === 1 ? true : null"
+                        #startTime="ngModel"
+                        (ngModelChange)="
+                          validateTimes(startTime.value, endTime.value)
+                        "
+                        pattern="^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$"
+                        title="Format must be hh:mm:ss"
                       />
+                    </div>
+                  </div>
+                </div>
+                <div class="flex w-full justify-end">
+                  <div
+                    dir="rtl"
+                    class="w-1/2 text-red-500"
+                    *ngIf="endTime.invalid || endTime.dirty || endTime.touched"
+                  >
+                    <div *ngIf="endTime.errors?.required">إلى الوقت مطلوب</div>
+                    <div *ngIf="endTime.errors?.pattern">
+                      يجب أن يكون التنسيق hh:mm:ss.
+                    </div>
+                    <div *ngIf="customErrors.endTimeAfterDuration">
+                      وقت الانتهاء يتجاوز مدة الفيديو.
+                    </div>
+                  </div>
+                  <div
+                    dir="rtl"
+                    class="w-1/2 text-red-500"
+                    *ngIf="
+                      startTime.invalid || startTime.dirty || startTime.touched
+                    "
+                  >
+                    <div *ngIf="startTime.errors?.required">من الوقت مطلوب</div>
+                    <div *ngIf="startTime.errors?.pattern">
+                      يجب أن يكون التنسيق hh:mm:ss.
+                    </div>
+                    <div *ngIf="customErrors.startTimeAfterEndTime">
+                      لا يمكن أن يكون وقت البدء بعد وقت الانتهاء.
                     </div>
                   </div>
                 </div>
               </div>
-              <div
-                class="flex h-[70px] flex-col items-end justify-start gap-1.5 self-stretch"
-              >
-                <div class="flex items-center justify-end gap-2 self-stretch">
+              <div class="flex flex-col gap-1 self-stretch">
+                <div
+                  class="flex flex-col items-end justify-start gap-1.5 self-stretch"
+                >
+                  <div class="flex items-center justify-end gap-2 self-stretch">
+                    <div
+                      class="shrink grow basis-0 text-right text-sm font-medium leading-snug text-[#0d0d12]"
+                    >
+                      عنوان المقطع
+                    </div>
+                  </div>
                   <div
-                    class="shrink grow basis-0 text-right text-sm font-medium leading-snug text-[#0d0d12]"
+                    class="flex items-start justify-start gap-1.5 self-stretch"
                   >
-                    عنوان المقطع
+                    <div
+                      class="flex shrink grow basis-0 items-center justify-start gap-2 self-stretch rounded-lg border border-gray-200 bg-white px-3 py-2"
+                    >
+                      <div
+                        class="shrink grow basis-0 text-right text-sm font-normal leading-snug text-[#0d0d12]"
+                        dir="rtl"
+                      >
+                        <input
+                          type="text"
+                          name="clipTitle"
+                          [(ngModel)]="clip.clip_title"
+                          placeholder="ادخل عنوان المقطع"
+                          class="w-full bg-transparent outline-none"
+                          required
+                          #clipTitle="ngModel"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div
-                  class="flex h-[42px] items-start justify-start gap-1.5 self-stretch"
+                  class="w-10/12 text-red-500"
+                  *ngIf="
+                    clipTitle.invalid && (clipTitle.dirty || clipTitle.touched)
+                  "
                 >
-                  <div
-                    class="flex shrink grow basis-0 items-center justify-start gap-2 self-stretch rounded-lg border border-gray-200 bg-white px-3 py-2"
-                  >
-                    <div
-                      class="shrink grow basis-0 text-right text-sm font-normal leading-snug text-[#0d0d12]"
-                      dir="rtl"
-                    >
-                      <input
-                        type="text"
-                        [(ngModel)]="clip.clip_title"
-                        placeholder="ادخل عنوان المقطع"
-                        class="w-full outline-none"
-                      />
-                    </div>
+                  <div *ngIf="clipTitle.errors?.required">
+                    عنوان المقطع مطلوب
                   </div>
                 </div>
               </div>
-              <div
-                class="flex h-[70px] flex-col items-end justify-start gap-1.5 self-stretch"
-              >
-                <div class="flex items-center justify-end gap-2 self-stretch">
+              <div class="flex flex-col gap-1 self-stretch">
+                <div
+                  class="flex flex-col items-end justify-start gap-1.5 self-stretch"
+                >
+                  <div class="flex items-center justify-end gap-2 self-stretch">
+                    <div
+                      class="shrink grow basis-0 text-right text-sm font-medium leading-snug text-[#0d0d12]"
+                    >
+                      الثامبنال
+                    </div>
+                  </div>
                   <div
-                    class="shrink grow basis-0 text-right text-sm font-medium leading-snug text-[#0d0d12]"
+                    class="flex items-start justify-start gap-1.5 self-stretch"
                   >
-                    الثامبنال
+                    <div
+                      class="flex shrink grow basis-0 items-center justify-start gap-2 self-stretch rounded-lg border border-gray-200 bg-white px-3 py-2"
+                    >
+                      <div
+                        class="shrink grow basis-0 text-right text-sm font-normal leading-snug text-[#0d0d12]"
+                        dir="rtl"
+                      >
+                        <textarea
+                          type="text"
+                          name="thumbnail"
+                          [(ngModel)]="clip.thumbnail"
+                          placeholder="ادخل الثامبنل"
+                          class="h-20 w-full bg-transparent outline-none"
+                          required
+                          #thumbnail="ngModel"
+                        ></textarea>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div
-                  class="flex h-[42px] items-start justify-start gap-1.5 self-stretch"
+                  class="w-10/12 text-red-500"
+                  *ngIf="
+                    thumbnail.invalid && (thumbnail.dirty || thumbnail.touched)
+                  "
                 >
-                  <div
-                    class="flex shrink grow basis-0 items-center justify-start gap-2 self-stretch rounded-lg border border-gray-200 bg-white px-3 py-2"
-                  >
-                    <div
-                      class="shrink grow basis-0 text-right text-sm font-normal leading-snug text-[#0d0d12]"
-                      dir="rtl"
-                    >
-                      <input
-                        type="text"
-                        [(ngModel)]="clip.thumbnail"
-                        placeholder="ادخل الثامبنل"
-                        class="w-full outline-none"
-                      />
-                    </div>
-                  </div>
+                  <div *ngIf="thumbnail.errors?.required">الثامبنل مطلوب</div>
                 </div>
               </div>
-              <div
-                class="flex h-[70px] flex-col items-end justify-start gap-1.5 self-stretch"
-              >
-                <div class="flex items-center justify-end gap-2 self-stretch">
+              <div class="flex flex-col gap-1 self-stretch">
+                <div
+                  class="flex flex-col items-end justify-start gap-1.5 self-stretch"
+                >
+                  <div class="flex items-center justify-end gap-2 self-stretch">
+                    <div
+                      class="shrink grow basis-0 text-right text-sm font-medium leading-snug text-[#0d0d12]"
+                    >
+                      الكابشن
+                    </div>
+                  </div>
                   <div
-                    class="shrink grow basis-0 text-right text-sm font-medium leading-snug text-[#0d0d12]"
+                    class="flex items-start justify-start gap-1.5 self-stretch"
                   >
-                    الكابشن
+                    <div
+                      class="flex shrink grow basis-0 items-center justify-start gap-2 self-stretch rounded-lg border border-gray-200 bg-white px-3 py-2"
+                    >
+                      <div
+                        class="shrink grow basis-0 text-right text-sm font-normal leading-snug text-[#0d0d12]"
+                        dir="rtl"
+                      >
+                        <textarea
+                          type="text"
+                          name="caption"
+                          [(ngModel)]="clip.caption"
+                          placeholder="ادخل الكابشن"
+                          class="h-20 w-full bg-transparent outline-none"
+                          required
+                          #caption="ngModel"
+                        ></textarea>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div
-                  class="flex h-[42px] items-start justify-start gap-1.5 self-stretch"
+                  class="w-10/12 text-red-500"
+                  *ngIf="caption.invalid && (caption.dirty || caption.touched)"
                 >
-                  <div
-                    class="flex shrink grow basis-0 items-center justify-start gap-2 self-stretch rounded-lg border border-gray-200 bg-white px-3 py-2"
-                  >
-                    <div
-                      class="shrink grow basis-0 text-right text-sm font-normal leading-snug text-[#0d0d12]"
-                      dir="rtl"
-                    >
-                      <input
-                        type="text"
-                        [(ngModel)]="clip.caption"
-                        placeholder="ادخل الكابشن"
-                        class="w-full outline-none"
-                      />
-                    </div>
-                  </div>
+                  <div *ngIf="caption.errors?.required">الكابشن مطلوب</div>
                 </div>
               </div>
               <div
@@ -386,103 +646,201 @@
                   class="flex flex-col items-start justify-start gap-4 self-stretch"
                 >
                   <div
-                    *ngFor="let person of clip.persons; let j = index"
-                    class="flex items-center justify-start gap-8 self-stretch"
+                    class="flex items-center justify-between gap-8 self-stretch"
                   >
-                    <div
-                      (click)="fileInput.click()"
-                      class="relative h-16 w-16 cursor-pointer"
-                    >
+                    <div class="relative h-16 w-16 cursor-pointer">
                       <div
-                        *ngIf="!person.photo"
                         class="absolute left-0 top-0 flex h-16 w-16 items-center justify-center rounded-full border border-blue-600 bg-blue-50"
                       >
                         <img
-                          src="assets/cloud-upload.svg"
+                          src="assets/hamad-bin-khalifa.jpg"
                           alt="photo"
-                          class="rounded-full object-cover"
+                          class="h-14 w-14 rounded-full object-cover"
                         />
                       </div>
-                      <div class="group relative h-16 w-16">
-                        <div
-                          *ngIf="person.photo"
-                          class="absolute left-0 top-0 flex h-16 w-16 items-center justify-center rounded-full border border-blue-600 bg-blue-50"
-                        >
-                          <img
-                            [src]="getPersonPhotoUrl(person.photo)"
-                            alt="uploaded photo"
-                            class="h-14 w-14 rounded-full object-cover"
-                          />
-                          <div
-                            class="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                          >
-                            <div
-                              class="flex h-14 w-14 items-center justify-center rounded-full bg-black opacity-70"
-                            >
-                              <img src="assets/img-edit.svg" alt="icon" />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <input
-                        (change)="handleFileInput($event, i, j)"
-                        type="file"
-                        hidden
-                        #fileInput
-                      />
                     </div>
                     <div
                       class="flex shrink grow basis-0 flex-col items-end justify-start gap-1.5"
                     >
                       <div
-                        class="flex items-center justify-between gap-2 self-stretch"
+                        class="flex items-center justify-end gap-2 self-stretch"
                       >
-                        <img
-                          (click)="deletePerson(i, j)"
-                          src="assets/delete.svg"
-                          alt="icon"
-                          class="cursor-pointer"
-                        />
                         <div
-                          class="text-right text-sm font-medium leading-snug text-[#0d0d12]"
+                          class="text-right text-sm font-medium leading-snug text-zinc-950"
                         >
                           الاسم
                         </div>
                       </div>
                       <div
-                        class="flex items-center justify-start gap-2 self-stretch rounded-lg border border-gray-200 bg-white px-3 py-2"
+                        class="flex items-center justify-start gap-2 self-stretch rounded-lg border border-zinc-200 bg-white px-3 py-2"
+                      >
+                        <input
+                          value="حمد بن جاسم بن جبر آل ثاني"
+                          class="shrink grow basis-0 text-right leading-relaxed outline-none"
+                          readonly
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    *ngFor="
+                      let person of clip.persons;
+                      let j = index;
+                      trackBy: trackByPerson
+                    "
+                    class="flex items-center justify-start gap-8 self-stretch"
+                  >
+                    <div class="flex h-full items-start">
+                      <div
+                        (click)="fileInput.click()"
+                        class="relative h-16 w-16 cursor-pointer"
                       >
                         <div
-                          class="shrink grow basis-0 text-right text-base font-normal leading-relaxed text-[#0d0d12]"
-                          dir="rtl"
+                          *ngIf="!person.photo"
+                          class="absolute left-0 top-0 flex h-16 w-16 items-center justify-center rounded-full border border-blue-600 bg-blue-50"
                         >
-                          <input
-                            type="text"
-                            [(ngModel)]="person.name"
-                            placeholder="ادخل اسم الشخصية"
-                            class="w-full outline-none"
+                          <img
+                            src="assets/cloud-upload.svg"
+                            alt="photo"
+                            class="rounded-full object-cover"
                           />
+                        </div>
+                        <div class="group relative h-16 w-16">
+                          <div
+                            *ngIf="person.photo"
+                            class="absolute left-0 top-0 flex h-16 w-16 items-center justify-center rounded-full border border-blue-600 bg-blue-50"
+                          >
+                            <img
+                              [src]="getPersonPhotoUrl(person.photo)"
+                              alt="uploaded photo"
+                              class="h-14 w-14 rounded-full object-cover"
+                            />
+                            <div
+                              *ngIf="clip.clip_status === 0 ? true : null"
+                              class="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                            >
+                              <div
+                                class="flex h-14 w-14 items-center justify-center rounded-full bg-black opacity-70"
+                              >
+                                <img src="assets/img-edit.svg" alt="icon" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <input
+                          (change)="handleFileInput($event, i, j)"
+                          type="file"
+                          hidden
+                          #fileInput
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="flex shrink grow basis-0 flex-col items-end justify-start gap-1.5"
+                    >
+                      <div class="flex flex-col gap-1 self-stretch">
+                        <div
+                          class="flex items-center justify-between gap-2 self-stretch"
+                          [ngClass]="{
+                            'justify-between': clip.clip_status === 0,
+                            'justify-end':
+                              clip.clip_status === 1 || clip.clip_status === -1,
+                          }"
+                        >
+                          <img
+                            *ngIf="clip.clip_status === 0 ? true : null"
+                            (click)="deletePerson(i, j)"
+                            src="assets/delete.svg"
+                            alt="icon"
+                            class="cursor-pointer"
+                          />
+                          <div
+                            class="text-right text-sm font-medium leading-snug text-[#0d0d12]"
+                          >
+                            الاسم
+                          </div>
+                        </div>
+                        <div
+                          class="flex items-center justify-start gap-2 self-stretch rounded-lg border border-gray-200 bg-white px-3 py-2"
+                        >
+                          <div
+                            class="shrink grow basis-0 text-right text-base font-normal leading-relaxed text-[#0d0d12]"
+                            dir="rtl"
+                          >
+                            <input
+                              type="text"
+                              name="personName"
+                              [name]="'personName' + i + '-' + j"
+                              [(ngModel)]="person.name"
+                              placeholder="ادخل اسم الشخصية"
+                              class="w-full bg-transparent outline-none"
+                              required
+                              #personName="ngModel"
+                              (input)="
+                                filterPersonSuggestions(
+                                  $event.target.value,
+                                  i,
+                                  j
+                                )
+                              "
+                              (focus)="onFocusPersonInput(i, j)"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        *ngIf="
+                          personSuggestions.length > 0 && focusedPersonIndex?.clipIndex === i && focusedPersonIndex?.personIndex === j
+                        "
+                        class="suggestions-list z-[1000] max-h-52 w-[100%] overflow-y-auto rounded-md border border-gray-200 bg-white"
+                      >
+                        <div
+                          class="flex cursor-pointer items-center gap-3 p-2 hover:bg-[#f0f0f0]"
+                          dir="rtl"
+                          *ngFor="let suggestion of personSuggestions"
+                          (click)="selectPersonSuggestion(i, j, suggestion)"
+                        >
+                          <img
+                            [src]="suggestion.photo"
+                            alt="photo"
+                            class="h-10 w-10 rounded-full object-cover"
+                          />
+                          {{ suggestion.character_name }}
+                        </div>
+                      </div>
+                      <div
+                        class="w-full text-red-500"
+                        *ngIf="
+                          personName.invalid &&
+                          (personName.dirty || personName.touched)
+                        "
+                      >
+                        <div *ngIf="personName.errors?.required">
+                          اسم الشخصية مطلوب
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div
-                  (click)="addPerson(i)"
-                  class="flex cursor-pointer items-center justify-end gap-2 self-stretch rounded-md bg-white"
-                >
+                <div *ngIf="clip.clip_status === 0 ? true : null">
                   <div
-                    class="text-center text-base font-medium leading-relaxed text-blue-700"
+                    (click)="addPerson(i)"
+                    class="flex cursor-pointer items-center justify-end gap-2 self-stretch rounded-md bg-white"
                   >
-                    اضف شخصية
-                  </div>
-                  <div class="relative h-6 w-6">
-                    <img src="assets/add-person.svg" alt="icon" />
+                    <div
+                      class="text-center text-base font-medium leading-relaxed text-blue-700"
+                    >
+                      اضف شخصية
+                    </div>
+                    <div class="relative h-6 w-6">
+                      <img src="assets/add-person.svg" alt="icon" />
+                    </div>
                   </div>
                 </div>
               </div>
               <div
-                class="flex h-[58px] flex-col items-start justify-start gap-2.5 self-stretch py-2"
+                *ngIf="clip.clip_status === 0 ? true : null"
+                class="flex flex-col items-start justify-start gap-2.5 self-stretch py-2"
               >
                 <div
                   (click)="cutClip(clip.clip_id, i)"
@@ -497,22 +855,25 @@
               </div>
             </div>
           </div>
-          <div class="flex justify-end self-stretch pt-4">
-                <div
-                  class="flex cursor-pointer items-center justify-center gap-2 rounded-[10px] bg-neutral-950 p-4 py-3 shadow"
-                >
-                  <div
-                    (click)="addClip()"
-                    class="text-center text-base font-medium leading-[17px] tracking-tight text-white"
-                  >
-                    اضف مقطع جديد
-                  </div>
-                  <div class="relative h-5 w-5">
-                    <img src="assets/add-clip.svg" alt="icon" />
-                  </div>
-                </div>
+          <div
+            class="flex justify-end self-stretch pt-4"
+          >
+            <div
+              class="flex cursor-pointer items-center justify-center gap-2 rounded-[10px] bg-neutral-950 p-4 py-3 shadow"
+            >
+              <div
+                (click)="addClip()"
+                class="text-center text-base font-medium leading-[17px] tracking-tight text-white"
+              >
+                اضف مقطع جديد
               </div>
+              <div class="relative h-5 w-5">
+                <img src="assets/add-clip.svg" alt="icon" />
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      </form>
     </div>
   </div>
+</div>

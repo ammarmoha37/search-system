@@ -3,10 +3,16 @@
     class="flex w-full flex-col items-end justify-start gap-6 p-8 font-readex"
   >
     <div
-      class="flex items-center justify-end gap-2.5 self-stretch border-b border-gray-200 pb-7"
+      class="flex items-center justify-between gap-2.5 self-stretch border-b border-gray-200 pb-7"
     >
+      <div
+        routerLink="/disabled-videos"
+        class="flex cursor-pointer items-center justify-center rounded-lg bg-blue-600 px-4 pb-2.5 pt-2 text-center text-base font-normal leading-relaxed text-white"
+      >
+        الفيديوهات الموقوفة
+      </div>
       <div class="text-center text-2xl font-normal leading-9 text-gray-700">
-        الفديوهات
+        الفيديوهات
       </div>
     </div>
     <div
@@ -80,7 +86,7 @@
           </thead>
           <tbody class="text-gray-600">
             <tr
-              *ngFor="let video of paginatedVideos; let i = index"
+              *ngFor="let video of paginatedVideos.slice().reverse(); let i = index"
               [ngClass]="{ 'bg-gray-50': i % 2 === 0, 'bg-white': i % 2 !== 0 }"
               class="h-20 border-b border-gray-200 text-sm font-medium"
             >
@@ -168,5 +174,6 @@
 <app-clipping-tasks
   *ngIf="isClippingTasks"
   (close)="isClippingTasks = false"
+  (videoClipped)="onVideoClipped()"
   [defaultVideoId]="selectedVideoId"
 ></app-clipping-tasks>

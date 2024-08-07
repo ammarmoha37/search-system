@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TasksDataService } from '@services/tasks-data.service';
@@ -25,17 +25,20 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
   personToDeleteIndex: number | null = null;
   personClipIndex: number | null = null;
 
-  addressSuggestions: string[] = [];
+  // addressSuggestions: string[] = [];
   countrySuggestions: string[] = [];
+  eventTypeSuggestions: string[] = [];
   personSuggestions: { character_name: string; photo: string }[] = [];
 
   showCountrySuggestions = false;
-  showAddressSuggestions = false;
+  // showAddressSuggestions = false;
   showPersonSuggestions = false;
+  showEventTypeSuggestions = false;
 
-  addresses = [];
+  // addresses = [];
   countries = [];
   persons = [];
+  events = [];
 
   videoData: any = {
     videoId: '',
@@ -75,9 +78,9 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
     this.addClip(true);
     this.fetchDefaultVideoData();
 
-    this.videoForm.get('address')!.valueChanges.subscribe((value) => {
-      this.filterAddressSuggestions(value);
-    });
+    // this.videoForm.get('address')!.valueChanges.subscribe((value) => {
+    //   this.filterAddressSuggestions(value);
+    // });
 
     this.videoForm.get('country')!.valueChanges.subscribe((value) => {
       this.filterCountrySuggestions(value);
@@ -101,22 +104,35 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
     const personInputs = document.querySelectorAll(
       'input[formControlName="personName"]',
     );
+    const eventInputs = document.querySelectorAll(
+      'input[formControlName="eventType"]',
+    );
 
     const suggestionsList = document.querySelector('.suggestions-list');
 
-    if (
-      target !== addressInput &&
-      !addressInput?.contains(target) &&
-      !suggestionsList?.contains(target)
-    ) {
-      this.showAddressSuggestions = false;
-    }
+    // if (
+    //   target !== addressInput &&
+    //   !addressInput?.contains(target) &&
+    //   !suggestionsList?.contains(target)
+    // ) {
+    //   this.showAddressSuggestions = false;
+    // }
     if (
       target !== countryInput &&
       !countryInput?.contains(target) &&
       !suggestionsList?.contains(target)
     ) {
       this.showCountrySuggestions = false;
+    }
+
+    let isClickOutsideEvent = true;
+    eventInputs.forEach((input) => {
+      if (target === input || input.contains(target)) {
+        isClickOutsideEvent = false;
+      }
+    });
+    if (isClickOutsideEvent && !suggestionsList?.contains(target)) {
+      this.showEventTypeSuggestions = false;
     }
 
     const isClickOutsidePerson = Array.from(personInputs).every(
@@ -131,17 +147,31 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
     return text.replace(/أ|إ|آ/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي');
   }
 
-  filterAddressSuggestions(query: string): void {
-    if (query) {
-      const normalizedQuery = this.normalizeArabic(query);
-      this.addressSuggestions = this.addresses.filter((address) =>
-        this.normalizeArabic(address).includes(normalizedQuery),
-      );
-      this.showAddressSuggestions = this.addressSuggestions.length > 0;
-    } else {
-      this.showAddressSuggestions = false;
-    }
+  // showAllAddressSuggestions(): void {
+  //   this.addressSuggestions = [...this.addresses];
+  //   this.showAddressSuggestions = true;
+  // }
+
+  showAllCountrySuggestions(): void {
+    this.countrySuggestions = [...this.countries];
+    this.showCountrySuggestions = true;
   }
+
+  showAllEventSuggestions(): void {
+    this.eventTypeSuggestions = [...this.events];
+    this.showEventTypeSuggestions = true;
+  }
+
+  // filterAddressSuggestions(query: string): void {
+  //   if (query) {
+  //     const normalizedQuery = this.normalizeArabic(query);
+  //     this.addressSuggestions = this.addresses.filter((address) =>
+  //       this.normalizeArabic(address).includes(normalizedQuery),
+  //     );
+  //   } else {
+  //     this.showAllAddressSuggestions();
+  //   }
+  // }
 
   filterCountrySuggestions(query: string): void {
     if (query) {
@@ -149,9 +179,19 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
       this.countrySuggestions = this.countries.filter((country) =>
         this.normalizeArabic(country).includes(normalizedQuery),
       );
-      this.showCountrySuggestions = this.countrySuggestions.length > 0;
     } else {
-      this.showCountrySuggestions = false;
+      this.showAllCountrySuggestions();
+    }
+  }
+
+  filterEventTypeSuggestions(query: string): void {
+    if (query) {
+      const normalizedQuery = this.normalizeArabic(query);
+      this.eventTypeSuggestions = this.events.filter((event) =>
+        this.normalizeArabic(event).includes(normalizedQuery),
+      );
+    } else {
+      this.showAllEventSuggestions();
     }
   }
 
@@ -167,14 +207,19 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
     }
   }
 
-  selectAddressSuggestion(suggestion: string): void {
-    this.videoForm.get('address')!.setValue(suggestion);
-    this.showAddressSuggestions = false;
-  }
+  // selectAddressSuggestion(suggestion: string): void {
+  //   this.videoForm.get('address')!.setValue(suggestion);
+  //   this.showAddressSuggestions = false;
+  // }
 
   selectCountrySuggestion(suggestion: string): void {
     this.videoForm.get('country')!.setValue(suggestion);
     this.showCountrySuggestions = false;
+  }
+
+  selectEventTypeSuggestion(suggestion: string): void {
+    this.videoForm.get('eventType')!.setValue(suggestion);
+    this.showEventTypeSuggestions = false;
   }
 
   selectPersonSuggestion(
@@ -204,6 +249,7 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
       const personFormGroup = personFormArray.at(personIndex) as FormGroup;
       personFormGroup.get('personName')?.setValue(person.character_name);
       personFormGroup.get('personPhoto')?.setValue(person.photo);
+      console.log('photo in input', person.photo);
     }
   }
 
@@ -228,10 +274,10 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
       timeCodeStart: ['', Validators.required],
       timeCodeEnd: ['', Validators.required],
       timeCodeStartHours: ['00'],
-      timeCodeStartMinutes: ['00'],
+      timeCodeStartMinutes: [''],
       timeCodeStartSeconds: [''],
       timeCodeEndHours: ['00'],
-      timeCodeEndMinutes: ['00'],
+      timeCodeEndMinutes: [''],
       timeCodeEndSeconds: [''],
       caption: ['', Validators.required],
       thumbnail: ['', Validators.required],
@@ -336,6 +382,16 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
   }
 
   isValidSeconds(value: string): boolean {
+    const numericValue = +value;
+    return !isNaN(numericValue) && numericValue >= 0 && numericValue <= 59;
+  }
+
+  isValidMinutes(value: string): boolean {
+    const numericValue = +value;
+    return !isNaN(numericValue) && numericValue >= 0 && numericValue <= 59;
+  }
+
+  isValidHours(value: string): boolean {
     const numericValue = +value;
     return !isNaN(numericValue) && numericValue >= 0 && numericValue <= 59;
   }
@@ -456,8 +512,9 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
             userId: data.user_id,
           };
 
-          this.addresses = data.address.map((item: any) => item.address);
+          // this.addresses = data.addresses.map((item: any) => item.address);
           this.countries = data.countries.map((item: any) => item.country);
+          this.events = data.events.map((item: any) => item.type_name);
           this.persons = data.persons.map((item: any) => item);
 
           this.tasksDataService.fetchTasksStatus();
@@ -492,8 +549,10 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
           this.videoData.videoCode = newVideoData.videoCode;
           this.videoData.userId = newVideoData.userId;
 
-          this.addresses = data.address.map((item: any) => item.address);
+          // this.addresses = data.address.map((item: any) => item.address);
           this.countries = data.countries.map((item: any) => item.country);
+          this.persons = data.persons.map((item: any) => item);
+          this.events = data.events.map((item: any) => item.event);
 
           this.sheetComponent.fetchClips();
         }
@@ -550,6 +609,8 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
       formData.append('userId', this.videoData.userId);
       formData.append('clipsCount', String(this.clips.length));
 
+      this.logFormData(formData);
+
       this.videoService.postData(formData).subscribe({
         next: (response) => {
           this.loading = false;
@@ -576,8 +637,14 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
               this.sheetComponent.clearData();
             }
           }
+          window.scrollTo(0, 0);
 
           this.tasksDataService.fetchTasksStatus();
+
+          this.showCountrySuggestions = false;
+          // this.showAddressSuggestions = false;
+          this.showPersonSuggestions = false;
+          this.showEventTypeSuggestions = false;
         },
         error: (error) => {
           this.loading = false;
@@ -587,6 +654,20 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
     } else {
       console.log('Form is invalid');
     }
+  }
+
+  logFormData(formData: FormData): void {
+    console.log('FormData Contents:');
+    formData.forEach((value, key) => {
+      if (value instanceof File) {
+        console.log(
+          // `Key: ${key}, File Name: ${value.name}, Size: ${value.size} bytes, Type: ${value.type}`,
+          value,
+        );
+      } else {
+        console.log(`Key: ${key}, Value: ${value}`);
+      }
+    });
   }
 
   resetSelectElements(): void {
@@ -615,7 +696,7 @@ export class VideoTasksComponent implements OnInit, OnDestroy {
 
     const minuteSelects = document.querySelectorAll('select.minutes');
     minuteSelects.forEach((select) => {
-      setOrCreateOption(select as HTMLSelectElement, '00', 'الدقيقة');
+      setOrCreateOption(select as HTMLSelectElement, '', 'الدقيقة');
     });
 
     const secondSelects = document.querySelectorAll('select.seconds');

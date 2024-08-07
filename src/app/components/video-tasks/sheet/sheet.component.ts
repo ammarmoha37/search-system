@@ -52,6 +52,8 @@ export class SheetComponent {
 
   selectPerson(person: { character_name: string; photo: string }): void {
     this.personSelected.emit(person);
+    console.log('person photo in the sheet', person.photo);
+
     this.closePersonsGallery();
   }
 }

@@ -75,15 +75,12 @@ export class EditUserComponent {
     if (this.editUserForm.valid) {
       const formData = {
         ...this.editUserForm.value,
-        user_id: this.selectedUserId, // Adding the user_id to the formData
+        user_id: this.selectedUserId,
       };
-      console.log(formData);
 
       this.adminService.userEditInfo(formData).subscribe({
         next: (response) => {
           console.log('Data sent successfully:', response);
-          console.log(formData);
-
           this.close.emit();
           this.userEdited.emit();
         },

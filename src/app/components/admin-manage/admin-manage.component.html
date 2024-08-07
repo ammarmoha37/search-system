@@ -46,10 +46,10 @@
             <tr
               class="w-full self-stretch border-b border-gray-200 text-right text-sm text-gray-600"
             >
-              <th class="w-[270px] px-6 py-4 font-medium">اسم الباحث</th>
-              <th class="w-[270px] px-6 py-4 font-medium">المهام المكلف بها</th>
-              <th class="w-[270px] px-6 py-4 font-medium">المهام المنجزة</th>
-              <th class="w-[270px] px-6 py-4 font-medium">نسبة الإنجاز</th>
+              <th class="xl:w-56 2xl:w-64 px-6 py-4 font-medium">اسم الباحث</th>
+              <th class="xl:w-56 2xl:w-64 px-6 py-4 font-medium">المهام المكلف بها</th>
+              <th class="xl:w-56 2xl:w-64 px-6 py-4 font-medium">المهام المنجزة</th>
+              <th class="xl:w-56 2xl:w-64 px-6 py-4 font-medium">نسبة الإنجاز</th>
               <th></th>
             </tr>
           </thead>
@@ -103,7 +103,7 @@
               </td>
               <td
                 (click)="onEditTask(researcher.user_id)"
-                class="flex h-20 items-center justify-center"
+                class="flex h-20 items-center justify-end xl:pl-2 2xl:pl-5"
               >
                 <img src="assets/edit.svg" alt="icon" class="cursor-pointer" />
               </td>

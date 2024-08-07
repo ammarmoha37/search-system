@@ -22,6 +22,10 @@ export class AdminVideosComponent {
   constructor(private adminService: AdminDashboardService) {}
 
   ngOnInit() {
+    this.fetchVideos();
+  }
+
+  fetchVideos() {
     this.adminService.getAllVideos().subscribe({
       next: (data) => {
         this.videos = data;
@@ -95,6 +99,10 @@ export class AdminVideosComponent {
     const endIndex = startIndex + this.itemsPerPage;
     this.paginatedVideos = this.filteredVideos.slice(startIndex, endIndex);
     console.log('Paginated Videos:', this.paginatedVideos);
+  }
+
+  onVideoClipped() {
+    this.fetchVideos();
   }
 
   onClippingTasks(videoId: number) {

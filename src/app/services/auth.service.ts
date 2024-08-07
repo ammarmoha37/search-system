@@ -16,7 +16,19 @@ export class AuthService {
   private loginStatusSubject = new BehaviorSubject<boolean>(false);
   loginStatus$ = this.loginStatusSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.checkToken();
+  }
+
+  private checkToken() {
+    const token = localStorage.getItem(this.tokenKey);
+    if (token) {
+      // Check token validity or refresh it if necessary
+      this.loginStatusSubject.next(true);
+    } else {
+      this.loginStatusSubject.next(false);
+    }
+  }
 
   login(email: string, password: string): Observable<any> {
     return this.http
@@ -96,5 +108,4 @@ export class AuthService {
         }),
       );
   }
-
 }

@@ -114,4 +114,33 @@ export class AdminDashboardService {
       },
     );
   }
+
+  disableVideo(video_key: any) {
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+
+    return this.http.post<any>(
+      `${this.apiUrl}/admin/disableVideo`,
+      { video_key },
+      {
+        headers,
+      },
+    );
+  }
+
+  getAllDisabledVideos(): Observable<any[]> {
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.get<any[]>(`${this.apiUrl}/admin/getALlDisablededVideos`, {
+      headers,
+    });
+  }
+
+  enabledVideos(video_key: any): Observable<any[]> {
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.post<any[]>(`${this.apiUrl}/admin/enableVideo`, {video_key}, {
+      headers,
+    });
+  }
 }

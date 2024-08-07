@@ -1,0 +1,171 @@
+<div class="flex">
+  <div
+    class="flex w-full flex-col items-end justify-start gap-6 p-8 font-readex"
+  >
+    <div
+      class="flex items-center justify-end gap-2.5 self-stretch border-b border-gray-200 pb-7"
+    >
+      <div class="text-center text-2xl font-normal leading-9 text-gray-700">
+        الفيديوهات الموقوفة
+      </div>
+    </div>
+    <div
+      class="flex flex-col justify-end gap-5 self-stretch border-b border-gray-200 pb-5"
+    >
+      <div class="text-right text-2xl font-normal leading-9 text-gray-700">
+        إيقاف فيديو
+      </div>
+      <div class="flex justify-end">
+        <div class="flex w-[400px] flex-col gap-5">
+          <div
+            class="flex flex-col items-end justify-center gap-1.5 self-stretch"
+          >
+            <div class="flex items-center justify-end gap-2">
+              <div
+                class="shrink grow basis-0 text-right text-sm font-medium leading-snug text-gray-800"
+              >
+                كود الفيديو
+              </div>
+            </div>
+            <div
+              class="flex items-center justify-start gap-2 self-stretch rounded-lg border border-zinc-200 bg-white px-3 py-2"
+            >
+              <input
+                type="text"
+                placeholder="Ex:DAB 000001.mp4"
+                class="shrink grow basis-0 text-right leading-relaxed outline-none"
+                [(ngModel)]="videoKey"
+              />
+            </div>
+          </div>
+          <div
+            dir="rtl"
+            class="flex items-end justify-between gap-2.5 self-stretch"
+          >
+            <button
+              type="submit"
+              (click)="disableVideo(videoKey)"
+              class="flex h-12 items-center justify-center gap-2 rounded-[10px] px-[60px] py-2 shadow outline-none bg-blue-600"
+            >
+              <div
+                class="text-center text-base font-medium leading-relaxed text-white"
+              >
+                إيقاف الفيديو
+              </div>
+            </button>
+            <div
+              *ngIf="successMessage"
+              class="flex h-full items-center text-green-500"
+            >
+              {{ successMessage }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex flex-col items-start justify-start self-stretch rounded-xl border border-gray-200 bg-white"
+    >
+      <div class="flex w-full justify-end gap-4">
+        <div class="flex w-64 justify-end self-stretch py-4">
+          <div class="w-full rounded-lg border border-zinc-200 px-3 py-2">
+            <select
+              dir="rtl"
+              class="w-full text-right font-normal leading-relaxed text-gray-500 outline-none"
+              (change)="onResearcherChange($event)"
+            >
+              <option value="" selected>اختر الباحث</option>
+              <option
+                *ngFor="let researcher of researchers"
+                [value]="researcher.user_id"
+              >
+                {{ researcher.user_name }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="flex justify-end self-stretch py-4 pr-6">
+          <div
+            class="flex justify-between gap-2 rounded-lg border border-gray-200 p-2 shadow-sm"
+          >
+            <input
+              dir="rtl"
+              type="text"
+              placeholder="بحث بالكود"
+              class="w-56 outline-none"
+              [(ngModel)]="searchTerm"
+              (input)="onSearchChange()"
+            />
+            <img src="assets/search.svg" alt="icon" />
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center justify-end gap-4 self-stretch">
+        <table class="min-w-full bg-white" dir="rtl">
+          <thead class="border-y border-gray-200">
+            <tr
+              class="w-full self-stretch border-b border-gray-200 text-right text-sm text-gray-600"
+            >
+              <th class="px-6 py-4 font-medium">كود الفيديو</th>
+              <th class="px-6 py-4 font-medium">
+                <div class="flex w-12 justify-center">المدة</div>
+              </th>
+              <th class="px-6 py-4 font-medium">اسم الباحث</th>
+              <th class="px-6 py-4 font-medium">رابط المقطع</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody class="text-gray-600">
+            <tr
+              *ngFor="let video of paginatedVideos; let i = index"
+              [ngClass]="{ 'bg-gray-50': i % 2 === 0, 'bg-white': i % 2 !== 0 }"
+              class="h-20 border-b border-gray-200 text-sm font-medium"
+            >
+              <td class="px-6 py-4">
+                <div class="flex items-center text-gray-800">
+                  {{ video.video_key }}
+                </div>
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex items-center text-gray-800">
+                  {{ video.video_duration }}
+                </div>
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex items-center text-gray-800">
+                  {{ video.user_name }}
+                </div>
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex items-center text-[#0062ff] underline">
+                  <a [href]="video.aws_url" target="_blank"> اضغط هنا </a>
+                </div>
+              </td>
+              <td class="flex h-20 items-center justify-center">
+                <button
+                  (click)="enableVideo(video.video_key)"
+                  class="flex h-12 items-center justify-center gap-2 rounded-[10px] bg-blue-600 px-3 py-0.5 shadow outline-none"
+                >
+                  <div
+                    class="text-center text-base font-medium leading-relaxed text-white"
+                  >
+                    تفعيل الفيديو
+                  </div>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <app-pagination
+        class="w-full"
+        [totalItems]="totalItems"
+        [itemsPerPage]="itemsPerPage"
+        (pageChange)="setPage($event)"
+      ></app-pagination>
+    </div>
+  </div>
+  <div class="w-[300px]">
+    <app-sidebar></app-sidebar>
+  </div>
+</div>

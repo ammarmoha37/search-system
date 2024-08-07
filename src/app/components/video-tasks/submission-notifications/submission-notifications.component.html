@@ -3,7 +3,7 @@
   <div *ngIf="isVisible">
     <div
       *ngIf="status"
-      class="fixed bottom-3 right-3 z-50 min-w-80 flex flex-col justify-end self-stretch rounded-lg border p-4 shadow-lg"
+      class="fixed bottom-3 right-3 z-[2000] min-w-80 flex flex-col justify-end self-stretch rounded-lg border p-4 shadow-lg"
       [ngClass]="{
         'border-blue-500 bg-blue-50': status === 'login' || status === 'success',
         'border-red-500 bg-red-50': status === 'error',

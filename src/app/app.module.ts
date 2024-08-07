@@ -30,6 +30,9 @@ import { EditTasksComponent } from './components/edit-tasks/edit-tasks.component
 import { ClippingTasksComponent } from '@components/admin-videos/clipping-tasks/clipping-tasks.component';
 import { ChartComponent } from './components/admin-dashboard/chart/chart.component';
 import { EditUserComponent } from './components/researchers-list/edit-user/edit-user.component';
+import { DisabledVideosComponent } from './components/admin-videos/disabled-videos/disabled-videos.component';
+import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
+import { UnauthenticatedComponent } from './components/unauthenticated/unauthenticated.component';
 
 @NgModule({
   declarations: [
@@ -54,6 +57,9 @@ import { EditUserComponent } from './components/researchers-list/edit-user/edit-
     ClippingTasksComponent,
     ChartComponent,
     EditUserComponent,
+    DisabledVideosComponent,
+    UnauthorizedComponent,
+    UnauthenticatedComponent,
   ],
   imports: [
     BrowserModule,
